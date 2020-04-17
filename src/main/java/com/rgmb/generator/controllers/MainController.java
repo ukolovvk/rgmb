@@ -1,8 +1,10 @@
 package com.rgmb.generator.controllers;
 
-import com.rgmb.generator.entity.Book;
-import com.rgmb.generator.exceptions.DaoException;
-import com.rgmb.generator.service.BookService;
+import com.rgmb.generator.entity.*;
+import com.rgmb.generator.impdao.ImpActorDAO;
+import com.rgmb.generator.impdao.ImpBookDAO;
+import com.rgmb.generator.impdao.ImpMovieDAO;
+import com.rgmb.generator.impdao.ImpProductionDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -14,19 +16,34 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class MainController {
 
     @Autowired
-    @Qualifier("bookService")
-    BookService bookService;
+    @Qualifier("bookDAO")
+    ImpBookDAO bookDao;
+
+    @Autowired
+    @Qualifier("MovieDAO")
+    ImpMovieDAO movieDAO;
+
+    @Autowired
+    @Qualifier("actorDAO")
+    ImpActorDAO actorDAO;
+
+    @Autowired
+    @Qualifier("ProductionDAO")
+    ImpProductionDAO productionDAO;
 
     @GetMapping("/hello")
     public String hello(@RequestParam(name = "name",required = false,defaultValue = "World") String name, Model model){
-        Book book;
-        try {
-            book = bookService.getRandomBook(0,200);
-            name = book.getAuthor().getName() + " " + book.getTitle() + " " + book.getGenre().getName() + " " + book.getSize();
-        }catch (DaoException e){
-            System.out.println("wtf");
+        Book book = bookDao.getRandomBook();
+        String authors = "";
+        for(Author author : book.getAuthors()){
+            authors += author.getName() + ", ";
         }
-        model.addAttribute("name",name);
+        String genres = "";
+        for(Genre genre : book.getGenres()){
+            authors += genre.getName() + ", ";
+        }
+        System.out.println("Title " + book.getTitle() + " authors : " + authors + " genres: " + genres + " page count = " + book.getSize() + " release year : " + book.getYear() + " rating : " + book.getRating() + " annotation : " + book.getAnnotation());
         return "hello";
     }
 }
+

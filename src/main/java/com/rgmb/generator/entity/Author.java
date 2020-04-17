@@ -9,6 +9,11 @@ public class Author {
         this.name = name;
     }
 
+    public Author(String name) {
+        this.id = 0;
+        this.name = name;
+    }
+
     public int getId() {
         return id;
     }

@@ -3,7 +3,9 @@ package com.rgmb.generator.impdao;
 import com.rgmb.generator.dao.GenreDAO;
 import com.rgmb.generator.entity.Genre;
 import com.rgmb.generator.mappers.GenreRowMapper;
+import com.rgmb.generator.mappers.GenreRowMapperForFindByGenreName;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -48,5 +50,21 @@ public class ImpGenreDAO implements GenreDAO {
     public Genre findByNameGenre(String nameGenre) {
         String SQL = "SELECT * FROM genre WHERE LOWER(genre_name) = LOWER(?)";
         return template.queryForObject(SQL,new GenreRowMapper(),nameGenre);
+    }
+
+    @Override
+    public int addWithReturningId(Genre genre) {
+        String SQL = "INSERT INTO genre(genre_name) VALUES(?) RETURNING id";
+        return  template.queryForObject(SQL,new GenreRowMapperForFindByGenreName(), genre.getName());
+    }
+
+    @Override
+    public int findIdByGenreName(String genreName) {
+        String SQL = "SELECT * FROM genre WHERE LOWER(genre_name) = LOWER(?)";
+        try {
+            return template.queryForObject(SQL, new GenreRowMapperForFindByGenreName(), genreName);
+        }catch(EmptyResultDataAccessException ex){
+            return 0;
+        }
     }
 }

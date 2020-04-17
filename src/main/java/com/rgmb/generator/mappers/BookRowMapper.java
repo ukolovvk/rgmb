@@ -7,23 +7,38 @@ import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BookRowMapper implements RowMapper<Book> {
-
     @Override
     public Book mapRow(ResultSet resultSet, int i) throws SQLException {
-        int id = resultSet.getInt("id");
-        String title= resultSet.getString("title");
-        int authorID = resultSet.getInt("author_id");
-        int genreID = resultSet.getInt("genre_id");
-        int size = resultSet.getInt("size");
+        int id = resultSet.getInt("book_id");
+        String title = resultSet.getString("title");
+        String  resultGenres = resultSet.getString("genres");
+        List<Genre> resultGenresList = new ArrayList<>();
+        if(resultGenres != null) {
+            String genres[] = resultGenres.split(",");
+            for (String genre : genres) {
+                resultGenresList.add(new Genre(genre));
+            }
+        }
+        String resultAuthors = resultSet.getString("authors");
+        List<Author> resultAuthorsList = new ArrayList<>();
+        if(resultAuthors != null) {
+            String authors[] = resultAuthors.split(",");
+            for (String author : authors) {
+                resultAuthorsList.add(new Author(author));
+            }
+        }
+        double rating = resultSet.getDouble("rating");
+        int pageCount = resultSet.getInt("page_count");
+        int year = resultSet.getInt("year");
         String annotation = resultSet.getString("annotation");
-        String authorNAME = resultSet.getString("name");
-        String genreNAME = resultSet.getString("genre_name");
-        Author author = new Author(authorID,authorNAME);
-        Genre genre = new Genre(genreID,genreNAME);
         if(annotation == null)
-            return new Book(id,author,title,genre,size);
-        return new Book(id,author,title,genre,size,annotation);
+            annotation = "";
+        if(year == 0)
+            return new Book(id,resultAuthorsList,title,resultGenresList,pageCount,annotation,rating);
+        return new Book(id,resultAuthorsList,title,resultGenresList,pageCount,annotation,rating,year);
     }
 }

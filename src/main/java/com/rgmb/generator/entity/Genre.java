@@ -4,6 +4,16 @@ public class Genre {
     private int id;
     private String name;
 
+    public Genre(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public Genre(String name) {
+        this.id = 0;
+        this.name = name;
+    }
+
     public int getId() {
         return id;
     }
@@ -20,8 +30,4 @@ public class Genre {
         this.name = name;
     }
 
-    public Genre(int id, String name) {
-        this.id = id;
-        this.name = name;
-    }
 }

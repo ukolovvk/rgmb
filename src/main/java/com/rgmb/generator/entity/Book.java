@@ -1,37 +1,56 @@
 package com.rgmb.generator.entity;
-
-import java.util.Calendar;
+import java.util.List;
 
 public class Book {
     private int id;
-    private Author author;
+    private List<Author> authors;
     private String title;
-    private Genre genre;
+    private List<Genre> genres;
     private int size;
     private String annotation;
+    private double rating;
+    private int year;
 
-    public Book(Author author, String title, Genre genre, int size, String annotation) {
-        this.author = author;
+    public Book(int id, List<Author> authors, String title, List<Genre> genres, int size, String annotation, double rating, int year) {
+        this.id = id;
+        this.authors = authors;
         this.title = title;
-        this.genre = genre;
+        this.genres = genres;
         this.size = size;
         this.annotation = annotation;
+        this.rating = rating;
+        this.year = year;
     }
 
-    public Book(Author author, String title, Genre genre){
-        this.author = author;
+    public Book(int id, List<Author> authors, String title, List<Genre> genres, int size, String annotation, double rating) {
+        this.id = id;
+        this.authors = authors;
         this.title = title;
-        this.genre = genre;
-        size = 0;
-        annotation = "";
-    }
-
-    public Book(Author author, String title, Genre genre,int size){
-        this.author = author;
-        this.title = title;
-        this.genre = genre;
+        this.genres = genres;
         this.size = size;
-        annotation = "";
+        this.annotation = annotation;
+        this.rating = rating;
+        this.year = 0;
+    }
+
+    public Book(List<Author> authors, String title, List<Genre> genres, int size, String annotation, double rating, int year) {
+        this.authors = authors;
+        this.title = title;
+        this.genres = genres;
+        this.size = size;
+        this.annotation = annotation;
+        this.rating = rating;
+        this.year = year;
+    }
+
+    public Book(List<Author> authors, String title, List<Genre> genres, int size, String annotation, double rating) {
+        this.authors = authors;
+        this.title = title;
+        this.genres = genres;
+        this.size = size;
+        this.annotation = annotation;
+        this.rating = rating;
+        this.year = 0;
     }
 
     public int getId() {
@@ -42,12 +61,12 @@ public class Book {
         this.id = id;
     }
 
-    public Author getAuthor() {
-        return author;
+    public List<Author> getAuthors() {
+        return authors;
     }
 
-    public void setAuthor(Author author) {
-        this.author = author;
+    public void setAuthors(List<Author> authors) {
+        this.authors = authors;
     }
 
     public String getTitle() {
@@ -58,12 +77,12 @@ public class Book {
         this.title = title;
     }
 
-    public Genre getGenre() {
-        return genre;
+    public List<Genre> getGenres() {
+        return genres;
     }
 
-    public void setGenre(Genre genre) {
-        this.genre = genre;
+    public void setGenres(List<Genre> genres) {
+        this.genres = genres;
     }
 
     public int getSize() {
@@ -82,5 +101,20 @@ public class Book {
         this.annotation = annotation;
     }
 
+    public double getRating() {
+        return rating;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
+    }
 
 }

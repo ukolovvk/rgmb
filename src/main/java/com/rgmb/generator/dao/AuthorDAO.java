@@ -9,5 +9,7 @@ public interface AuthorDAO extends GeneralBookDAO<Author>{
 
     Author findByName(String name);
 
+    int addWithReturningId(Author author);
 
+    int findIdByAuthorName(String authorName);
 }

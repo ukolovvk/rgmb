@@ -3,7 +3,9 @@ package com.rgmb.generator.impdao;
 import com.rgmb.generator.dao.AuthorDAO;
 import com.rgmb.generator.entity.Author;
 import com.rgmb.generator.mappers.AuthorRowMapper;
+import com.rgmb.generator.mappers.AuthorRowMapperForFindByAuthorName;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -24,6 +26,22 @@ public class ImpAuthorDAO implements AuthorDAO {
     public Author findByName(String name) {
         String SQL = "SELECT * FROM authors WHERE LOWER(name) = LOWER(?)";
         return template.queryForObject(SQL,new AuthorRowMapper(),name);
+    }
+
+    @Override
+    public int addWithReturningId(Author author) {
+        String SQL = "INSERT INTO authors(name) VALUES(?) RETURNING id";
+        return template.queryForObject(SQL,new AuthorRowMapperForFindByAuthorName(),author.getName());
+    }
+
+    @Override
+    public int findIdByAuthorName(String authorName) {
+        String SQL = "SELECT * FROM authors WHERE LOWER(name) = LOWER(?)";
+        try {
+            return template.queryForObject(SQL, new AuthorRowMapperForFindByAuthorName(), authorName);
+        }catch (EmptyResultDataAccessException ex){
+            return 0;
+        }
     }
 
     @Override
