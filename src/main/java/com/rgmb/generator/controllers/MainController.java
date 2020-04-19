@@ -9,6 +9,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Controller
 public class MainController {
     @Autowired
@@ -31,9 +34,21 @@ public class MainController {
     @Qualifier("CompanyDAO")
     ImpCompanyDAO companyDAO;
 
+    @Autowired
+    @Qualifier("ImpGameDAO")
+    ImpGameDAO gameDAO;
+
+
     @GetMapping("/hello")
     public String hello(@RequestParam(name = "name",required = false,defaultValue = "World") String name, Model model){
-        companyDAO.deleteById(5);
+        List<GameGenre> listGenres = new ArrayList<>();
+        listGenres.add(new GameGenre("finalGG"));
+
+        List<Country> listCountry = new ArrayList<>();
+        listCountry.add(new Country("finalGG"));
+        GameCompany company = new GameCompany("company1");
+        Game game = new Game("finalGG", listGenres,listCountry,company,9,"");
+        gameDAO.add(game);
         return "hello";
     }
 }

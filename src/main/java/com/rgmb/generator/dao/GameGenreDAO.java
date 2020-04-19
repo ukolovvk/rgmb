@@ -6,4 +6,6 @@ public interface GameGenreDAO extends GeneralGameDAO<GameGenre> {
     int findIdByGameGenreName(String  gameGenreName);
 
     int addWithReturningId(GameGenre genre);
+
+    int updateById(int id, GameGenre gameGenre);
 }

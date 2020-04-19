@@ -9,7 +9,5 @@ public interface GeneralGameDAO<T> {
 
     int add(T t);
 
-    int updateById(int id,T t);
-
     int deleteById(int id);
 }

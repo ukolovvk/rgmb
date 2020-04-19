@@ -18,7 +18,7 @@ public class ImpCompanyDAO implements CompanyDAO {
 
     @Override
     public int findIdByGameCompanyName(String gameCompanyName) {
-        String SQL = "SELECT company_id FROM company WHERE LOWER(company_name) = LOWER(?) RETURNING company_id";
+        String SQL = "SELECT company_id FROM company WHERE LOWER(company_name) = LOWER(?)";
         try {
             return template.queryForObject(SQL, new CompanyRowMapperForFindById(), gameCompanyName);
         }catch (EmptyResultDataAccessException ex){

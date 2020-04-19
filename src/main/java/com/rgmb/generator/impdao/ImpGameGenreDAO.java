@@ -7,16 +7,18 @@ import com.rgmb.generator.mappers.GameGenreRowMapperForFindById;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository("GameGenreDAO")
 public class ImpGameGenreDAO implements GameGenreDAO {
     @Autowired
     JdbcTemplate template;
 
     @Override
     public int findIdByGameGenreName(String gameGenreName) {
-        String SQL = "SELECT genre_id FROM game_genres WHERE LOWER(genre_name) = LOWER(?) RETURNING genre_id";
+        String SQL = "SELECT genre_id FROM game_genres WHERE LOWER(genre_name) = LOWER(?)";
         try {
             return template.queryForObject(SQL, new GameGenreRowMapperForFindById(), gameGenreName);
         }catch (EmptyResultDataAccessException ex){
