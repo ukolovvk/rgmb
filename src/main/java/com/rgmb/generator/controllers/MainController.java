@@ -41,14 +41,8 @@ public class MainController {
 
     @GetMapping("/hello")
     public String hello(@RequestParam(name = "name",required = false,defaultValue = "World") String name, Model model){
-        List<GameGenre> listGenres = new ArrayList<>();
-        listGenres.add(new GameGenre("finalGG"));
-
-        List<Country> listCountry = new ArrayList<>();
-        listCountry.add(new Country("finalGG"));
-        GameCompany company = new GameCompany("company1");
-        Game game = new Game("finalGG", listGenres,listCountry,company,9,"");
-        gameDAO.add(game);
+        Game game = gameDAO.getRandomGame();
+        System.out.println("Title " + game.getTitle() + " genres " + game.getGenres().toString() + " countries " + game.getCountries() + " company " + game.getCompany());
         return "hello";
     }
 }

@@ -13,19 +13,23 @@ import java.util.ArrayList;
 public class GameRowMapper implements RowMapper<Game> {
     @Override
     public Game mapRow(ResultSet resultSet, int i) throws SQLException {
-        int id = resultSet.getInt("id");
+        int id = resultSet.getInt("game_id");
         String title = resultSet.getString("title");
-        String[] genres = resultSet.getString("genres").split(",");
+        String genres = resultSet.getString("genres");
         ArrayList<GameGenre> resultGenres = new ArrayList<>();
-        for(String genre : genres){
-            resultGenres.add(new GameGenre(genre));
+        if(genres != null) {
+            for (String genre : genres.split(",")) {
+                resultGenres.add(new GameGenre(genre));
+            }
         }
-        String[] countries = resultSet.getString("countries").split(",");
+        String countries = resultSet.getString("countries");
         ArrayList<Country> resultCountries = new ArrayList<>();
-        for(String country : countries){
-            resultCountries.add(new Country(country));
+        if(countries != null) {
+            for (String country : countries.split(",")) {
+                resultCountries.add(new Country(country));
+            }
         }
-        String companyStr = resultSet.getString("company");
+        String companyStr = resultSet.getString("company_name");
         if(companyStr == null)
             companyStr = "";
         GameCompany company = new GameCompany(companyStr);

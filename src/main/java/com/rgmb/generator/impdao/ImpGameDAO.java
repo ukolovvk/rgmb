@@ -12,10 +12,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Repository("ImpGameDAO")
+@Transactional(isolation = Isolation.READ_COMMITTED)
 public class ImpGameDAO implements GameDAO {
     @Autowired
     private JdbcTemplate template;
@@ -62,7 +66,8 @@ public class ImpGameDAO implements GameDAO {
             "ON games.company_id = company.company_id";
 
     @Override
-    public int add(Game game) {
+    @Transactional(isolation = Isolation.SERIALIZABLE,propagation = Propagation.REQUIRED)
+        public int add(Game game) {
         int companyID = companyDAO.findIdByGameCompanyName(game.getCompany().getName());
         if(companyID == 0)
             companyID = companyDAO.addWithReturningId(game.getCompany());

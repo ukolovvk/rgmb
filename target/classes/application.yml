@@ -8,6 +8,7 @@ spring:
   aop:
     auto: false
 
+
   thymeleaf:
     enabled: true
     encoding: UTF-8
@@ -18,3 +19,5 @@ spring:
 #   suffix html
     mode: HTML
     template-resolver-order: 0
+
+

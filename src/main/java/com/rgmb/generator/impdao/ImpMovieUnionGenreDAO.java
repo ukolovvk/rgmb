@@ -4,8 +4,12 @@ import com.rgmb.generator.dao.MovieUnionGenreDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository("MovieUnionGenreDAO")
+@Transactional(isolation = Isolation.READ_COMMITTED,propagation = Propagation.REQUIRED)
 public class ImpMovieUnionGenreDAO implements MovieUnionGenreDAO {
     @Autowired
     JdbcTemplate template;

@@ -11,10 +11,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Repository("MovieDAO")
+@Transactional(isolation = Isolation.READ_COMMITTED)
 public class ImpMovieDAO implements MovieDAO {
     @Autowired
     private JdbcTemplate template;

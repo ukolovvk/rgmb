@@ -10,9 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 @Repository("bookDAO")
+@Transactional(isolation = Isolation.READ_COMMITTED)
 public class ImpBookDAO implements BookDAO {
     @Autowired
     private JdbcTemplate template;
