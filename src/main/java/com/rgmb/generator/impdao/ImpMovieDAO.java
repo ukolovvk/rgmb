@@ -12,6 +12,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -88,10 +89,15 @@ public class ImpMovieDAO implements MovieDAO {
     @Override
     public Movie findById(int id) {
         String SQL = generalSelect + " WHERE movies.movie_id = ?";
-        return template.queryForObject(SQL,new MovieRowMapper(),id);
+        try {
+            return template.queryForObject(SQL, new MovieRowMapper(), id);
+        }catch(EmptyResultDataAccessException ex){
+            return null;
+        }
     }
 
     @Override
+    @Transactional(isolation = Isolation.SERIALIZABLE,propagation = Propagation.REQUIRED)
     public int add(Movie movie) {
         int productionID = productionDAO.findIdByProductionName(movie.getProduction().getName());
         if(productionID == 0)
@@ -122,7 +128,11 @@ public class ImpMovieDAO implements MovieDAO {
     @Override
     public List<Movie> findAll() {
         String SQL = generalSelect;
-        return template.query(SQL, new MovieRowMapper());
+        try {
+            return template.query(SQL, new MovieRowMapper());
+        }catch (EmptyResultDataAccessException ex){
+            return null;
+        }
     }
 
     @Override
@@ -143,13 +153,21 @@ public class ImpMovieDAO implements MovieDAO {
     @Override
     public Movie getRandomMovie() {
         String SQL = generalSelect + " WHERE movies.movie_id >= (SELECT ROUND(RANDOM() * (SELECT MAX(movie_id) FROM movies))) LIMIT 1 ";
-        return template.queryForObject(SQL, new MovieRowMapper());
+        try {
+            return template.queryForObject(SQL, new MovieRowMapper());
+        }catch (EmptyResultDataAccessException ex){
+            return null;
+        }
     }
 
     @Override
     public List<Movie> getRandomMovies(int numberOfMovies) {
         String SQL = generalSelect + " WHERE movies.movie_id >= (SELECT ROUND(RANDOM() * (SELECT MAX(movie_id) FROM movies))) LIMIT ?";
-        return template.query(SQL, new MovieRowMapper(),numberOfMovies);
+        try {
+            return template.query(SQL, new MovieRowMapper(), numberOfMovies);
+        }catch (EmptyResultDataAccessException ex){
+            return null;
+        }
     }
 
     @Override
@@ -158,7 +176,7 @@ public class ImpMovieDAO implements MovieDAO {
         try {
             return template.queryForObject(SQL, new MovieRowMapper(), genre.getName());
         }catch (EmptyResultDataAccessException ex){
-            throw new DaoException("Empty result");
+            return null;
         }
     }
 
@@ -168,14 +186,18 @@ public class ImpMovieDAO implements MovieDAO {
         try {
             return template.queryForObject(SQL, new MovieRowMapper(), firstYear, secondYear);
         }catch (EmptyResultDataAccessException ex){
-            throw new DaoException("Empty result");
+            return null;
         }
     }
 
     @Override
     public Movie getRandomMovie(MovieGenre genre, int firstYear, int secondYear) throws DaoException{
         String SQL = generalSelect + " WHERE movies.movie_id >= (SELECT ROUND(RANDOM() * (SELECT MAX(movie_id) FROM movies))) AND (movies.release_date BETWEEN ? AND ?) AND mgt.genres ILIKE '%?%'  LIMIT 1";
-        return template.queryForObject(SQL, new MovieRowMapper(), firstYear, secondYear, genre.getName());
+        try {
+            return template.queryForObject(SQL, new MovieRowMapper(), firstYear, secondYear, genre.getName());
+        }catch (EmptyResultDataAccessException ex){
+            return null;
+        }
     }
 
     @Override
@@ -184,7 +206,7 @@ public class ImpMovieDAO implements MovieDAO {
         try {
             return template.queryForObject(SQL, new MovieRowMapper(), production.getName());
         }catch (EmptyResultDataAccessException ex){
-            throw  new DaoException("Empty result");
+            return null;
         }
     }
 
@@ -194,7 +216,7 @@ public class ImpMovieDAO implements MovieDAO {
         try {
             return template.queryForObject(SQL, new MovieRowMapper(), production.getName(), genre.getName());
         }catch (EmptyResultDataAccessException ex){
-            throw  new DaoException("Empty result");
+            return null;
         }
     }
 
@@ -204,7 +226,7 @@ public class ImpMovieDAO implements MovieDAO {
         try {
             return template.queryForObject(SQL, new MovieRowMapper(), firstYear, secondYear,production.getName());
         }catch (EmptyResultDataAccessException ex){
-            throw  new DaoException("Empty result");
+            return null;
         }
     }
 
@@ -214,7 +236,7 @@ public class ImpMovieDAO implements MovieDAO {
         try {
             return template.queryForObject(SQL, new MovieRowMapper(), firstYear, secondYear, production.getName(), genre.getName());
         }catch (EmptyResultDataAccessException ex){
-            throw new DaoException("Empty result");
+            return null;
         }
     }
 

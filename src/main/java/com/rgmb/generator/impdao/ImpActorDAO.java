@@ -38,8 +38,12 @@ public class ImpActorDAO implements ActorDAO {
 
     @Override
     public Actor findById(int id) {
-        String SQL = "SELECT * FROM actors WHERE id = ?";
-        return template.queryForObject(SQL,new ActorRowMapper(),id);
+        String SQL = "SELECT * FROM actors WHERE actor_id = ?";
+        try {
+            return template.queryForObject(SQL, new ActorRowMapper(), id);
+        }catch (EmptyResultDataAccessException ex){
+            return null;
+        }
     }
 
     @Override
@@ -51,18 +55,22 @@ public class ImpActorDAO implements ActorDAO {
     @Override
     public List<Actor> findAll() {
         String SQL = "SELECT * FROM actors";
-        return template.query(SQL,new ActorRowMapper());
+        try {
+            return template.query(SQL, new ActorRowMapper());
+        }catch (EmptyResultDataAccessException ex){
+            return null;
+        }
     }
 
     @Override
     public int updateById(int id, Actor actor) {
-        String SQL = "UPDATE actors SET actor_name = ? WHERE id = ?";
+        String SQL = "UPDATE actors SET actor_name = ? WHERE actor_id = ?";
         return template.update(SQL,actor.getName(),id);
     }
 
     @Override
     public int deleteById(int id) {
-        String SQL = "DELETE FROM actors WHERE id = ?";
+        String SQL = "DELETE FROM actors WHERE actor_id = ?";
         return template.update(SQL, id);
     }
 

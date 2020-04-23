@@ -33,7 +33,11 @@ public class ImpCountryDAO implements CountryDAO {
     @Override
     public Country findById(int id) {
         String SQL = "SELECT * FROM countries WHERE id = ?";
-        return template.queryForObject(SQL,new CountryRowMapper(),id);
+        try {
+            return template.queryForObject(SQL, new CountryRowMapper(), id);
+        }catch (EmptyResultDataAccessException ex){
+            return null;
+        }
     }
 
     @Override
@@ -51,7 +55,11 @@ public class ImpCountryDAO implements CountryDAO {
     @Override
     public List<Country> findAll() {
         String SQL = "SELECT * FROM countries";
-        return template.query(SQL,new CountryRowMapper());
+        try {
+            return template.query(SQL, new CountryRowMapper());
+        }catch (EmptyResultDataAccessException ex){
+            return null;
+        }
     }
 
     @Override

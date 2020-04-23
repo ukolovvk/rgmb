@@ -39,6 +39,9 @@ public class GameRowMapper implements RowMapper<Game> {
         String annotation = resultSet.getString("annotation");
         if(annotation == null)
             annotation = "";
-        return new Game(id,title, resultGenres,resultCountries,company,releaseYear,annotation);
+        String imageName = resultSet.getString("image");
+        if(imageName == null)
+            imageName = "";
+        return new Game(id,title, resultGenres,resultCountries,company,releaseYear,annotation,imageName);
     }
 }

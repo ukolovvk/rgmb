@@ -5,11 +5,11 @@ import com.rgmb.generator.entity.Country;
 import com.rgmb.generator.entity.Game;
 import com.rgmb.generator.entity.GameCompany;
 import com.rgmb.generator.entity.GameGenre;
-import com.rgmb.generator.mappers.GameGenreRowMapperForFindById;
 import com.rgmb.generator.mappers.GameRowMapper;
 import com.rgmb.generator.mappers.GameRowMapperForFindById;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
@@ -21,6 +21,7 @@ import java.util.List;
 @Repository("ImpGameDAO")
 @Transactional(isolation = Isolation.READ_COMMITTED)
 public class ImpGameDAO implements GameDAO {
+
     @Autowired
     private JdbcTemplate template;
 
@@ -57,7 +58,7 @@ public class ImpGameDAO implements GameDAO {
             "ON guc.country_id = countries.id\n" +
             "GROUP BY (games.game_id)\n" +
             ")\n" +
-            "SELECT games.game_id, games.title, ggt.genres, gct.countries, company.company_name, games.release_year, games.annotation \n" +
+            "SELECT games.game_id, games.title, ggt.genres, gct.countries, company.company_name, games.release_year, games.annotation, games.image \n" +
             "FROM games LEFT JOIN game_genre_table AS ggt\n" +
             "ON games.game_Id = ggt.game_id\n" +
             "LEFT JOIN game_country_table AS gct\n" +
@@ -71,8 +72,8 @@ public class ImpGameDAO implements GameDAO {
         int companyID = companyDAO.findIdByGameCompanyName(game.getCompany().getName());
         if(companyID == 0)
             companyID = companyDAO.addWithReturningId(game.getCompany());
-        String SQL = "INSERT INTO games(title, annotation,release_year,company_id) VALUES (?,?,?,?) RETURNING game_id";
-        int gameID = template.queryForObject(SQL,new GameRowMapperForFindById(), game.getTitle(),game.getAnnotation(),game.getReleaseYear(),companyID);
+        String SQL = "INSERT INTO games(title, annotation,release_year,company_id, image) VALUES (?,?,?,?,?) RETURNING game_id";
+        int gameID = template.queryForObject(SQL,new GameRowMapperForFindById(), game.getTitle(),game.getAnnotation(),game.getReleaseYear(),companyID,game.getImageName());
         for(Country country : game.getCountries()){
             int countryID = countryDAO.findIdByCountryTitle(country.getName());
             if(countryID == 0)
@@ -145,48 +146,82 @@ public class ImpGameDAO implements GameDAO {
     @Override
     public List<Game> findByTitle(String title) {
         String SQL = generalSql + " WHERE games.title = ?";
-        return template.query(SQL,new GameRowMapper(), title);
+        try {
+            return template.query(SQL, new GameRowMapper(), title);
+        }catch (EmptyResultDataAccessException ex){
+            return null;
+        }
     }
 
     @Override
     public Game getRandomGame() {
         String SQL = generalSql + "  WHERE games.game_id >= (SELECT ROUND(RANDOM() * (SELECT MAX(game_id) FROM games))) LIMIT 1";
-        return template.queryForObject(SQL, new GameRowMapper());
+        try {
+            return template.queryForObject(SQL, new GameRowMapper());
+        }catch (EmptyResultDataAccessException ex){
+            return null;
+        }
     }
 
     @Override
     public Game getRandomGame(GameGenre genre) {
         String SQL = generalSql + "  WHERE games.game_id >= (SELECT ROUND(RANDOM() * (SELECT MAX(game_id) FROM games))) AND ggt.genres ILIKE '%?%' LIMIT 1";
-        return template.queryForObject(SQL, new GameRowMapper(),genre.getName());
+        try {
+            return template.queryForObject(SQL, new GameRowMapper(), genre.getName());
+        }catch (EmptyResultDataAccessException ex){
+            return null;
+        }
     }
 
     @Override
     public Game getRandomGame(int firstYear, int secondYear) {
         String SQL = generalSql + "  WHERE games.game_id >= (SELECT ROUND(RANDOM() * (SELECT MAX(game_id) FROM games))) AND (games.release_year BETWEEN ? AND ?) LIMIT 1";
-        return template.queryForObject(SQL,new GameRowMapper(), firstYear,secondYear);
+        try {
+            return template.queryForObject(SQL, new GameRowMapper(), firstYear, secondYear);
+        }catch (EmptyResultDataAccessException ex){
+            return null;
+        }
     }
 
     @Override
     public Game getRandomGame(GameGenre genre, int firstYear, int secondYear) {
         String SQL = generalSql + "  WHERE games.game_id >= (SELECT ROUND(RANDOM() * (SELECT MAX(game_id) FROM games))) AND (games.release_year BETWEEN ? AND ?) AND ggt.genres ILIKE '%?%' LIMIT 1";
-        return template.queryForObject(SQL,new GameRowMapper(), firstYear,secondYear,genre.getName());
+        try {
+            return template.queryForObject(SQL, new GameRowMapper(), firstYear, secondYear, genre.getName());
+        }catch (EmptyResultDataAccessException ex){
+            return null;
+        }
     }
 
     @Override
     public Game findById(int id) {
         String SQL = generalSql + " WHERE books.book_id = ?";
-        return template.queryForObject(SQL,new GameRowMapper(),id);
+        try {
+            return template.queryForObject(SQL, new GameRowMapper(), id);
+        }catch (EmptyResultDataAccessException ex){
+            return null;
+        }
     }
 
     @Override
     public List<Game> findAll() {
         String SQL = generalSql;
-        return template.query(SQL,new GameRowMapper());
+        try {
+            return template.query(SQL, new GameRowMapper());
+        }catch (EmptyResultDataAccessException ex){
+            return null;
+        }
     }
 
     @Override
     public int deleteById(int id) {
         String SQL = "DELETE FROM games WHERE game_id = ?";
         return template.update(SQL,id);
+    }
+
+    @Override
+    public int updateImageNameById(int id, String imageName) {
+        String SQL = "UPDATE games SET image = ? WHERE game_id = ?";
+        return template.update(SQL,imageName,id);
     }
 }

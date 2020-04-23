@@ -1,18 +1,17 @@
 package com.rgmb.generator.controllers;
 
-import com.rgmb.generator.entity.*;
+import com.rgmb.generator.entity.Actor;
+import com.rgmb.generator.entity.Book;
+import com.rgmb.generator.entity.Game;
 import com.rgmb.generator.impdao.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
-@Controller
+@RestController("/")
 public class MainController {
     @Autowired
     @Qualifier("bookDAO")
@@ -38,12 +37,24 @@ public class MainController {
     @Qualifier("ImpGameDAO")
     ImpGameDAO gameDAO;
 
-
     @GetMapping("/hello")
-    public String hello(@RequestParam(name = "name",required = false,defaultValue = "World") String name, Model model){
-        Game game = gameDAO.getRandomGame();
-        System.out.println("Title " + game.getTitle() + " genres " + game.getGenres().toString() + " countries " + game.getCountries() + " company " + game.getCompany());
-        return "hello";
+    public ResponseEntity<Game> hello(){
+        return  new ResponseEntity<>(gameDAO.getRandomGame(),HttpStatus.ACCEPTED);
     }
+
+    @PostMapping(value = "/hellopost", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> hellopost(@RequestBody Game game){
+        gameDAO.add(game);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @GetMapping("/rgmb")
+    public String rgmbLook(){
+        Book book = bookDao.findById(4);
+        if(book == null)
+            System.out.println("ok");
+        return "index";
+    }
+
 }
 

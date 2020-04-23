@@ -39,13 +39,21 @@ public class ImpCompanyDAO implements CompanyDAO {
     @Override
     public GameCompany findById(int id) {
         String SQL = "SELECT * FROM company WHERE company_id = ?";
-        return template.queryForObject(SQL,new GameCompanyRowMapper(),id);
+        try {
+            return template.queryForObject(SQL, new GameCompanyRowMapper(), id);
+        }catch (EmptyResultDataAccessException ex){
+            return null;
+        }
     }
 
     @Override
     public List<GameCompany> findAll() {
         String SQL = "SELECT * FROM company";
-        return template.query(SQL, new GameCompanyRowMapper());
+        try {
+            return template.query(SQL, new GameCompanyRowMapper());
+        }catch (EmptyResultDataAccessException ex){
+            return null;
+        }
     }
 
     @Override

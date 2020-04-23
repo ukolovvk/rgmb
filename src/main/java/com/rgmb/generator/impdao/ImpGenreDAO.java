@@ -23,13 +23,21 @@ public class ImpGenreDAO implements GenreDAO {
     @Override
     public Genre findById(int id) {
         String SQL = "SELECT * FROM genre WHERE id = ?";
-        return template.queryForObject(SQL,new GenreRowMapper(),id);
+        try {
+            return template.queryForObject(SQL, new GenreRowMapper(), id);
+        }catch (EmptyResultDataAccessException ex){
+            return null;
+        }
     }
 
     @Override
     public List<Genre> findAll() {
         String SQL = "SELECT * FROM genre ";
-        return template.query(SQL,new GenreRowMapper());
+        try {
+            return template.query(SQL, new GenreRowMapper());
+        }catch (EmptyResultDataAccessException ex){
+            return null;
+        }
     }
 
     @Override
@@ -53,7 +61,11 @@ public class ImpGenreDAO implements GenreDAO {
     @Override
     public Genre findByNameGenre(String nameGenre) {
         String SQL = "SELECT * FROM genre WHERE LOWER(genre_name) = LOWER(?)";
-        return template.queryForObject(SQL,new GenreRowMapper(),nameGenre);
+        try {
+            return template.queryForObject(SQL, new GenreRowMapper(), nameGenre);
+        }catch (EmptyResultDataAccessException ex){
+            return null;
+        }
     }
 
     @Override

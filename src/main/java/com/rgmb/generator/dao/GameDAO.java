@@ -21,6 +21,8 @@ public interface GameDAO  extends GeneralGameDAO<Game>{
 
     int updateCountriesById(int id, List<Country> countries);
 
+    int updateImageNameById(int id, String imageName);
+
     List<Game> findByTitle(String title);
 
     Game getRandomGame();

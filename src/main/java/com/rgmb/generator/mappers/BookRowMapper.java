@@ -37,8 +37,12 @@ public class BookRowMapper implements RowMapper<Book> {
         String annotation = resultSet.getString("annotation");
         if(annotation == null)
             annotation = "";
+        String imageName = resultSet.getString("image");
+        if(imageName == null)
+            imageName = "";
         if(year == 0)
-            return new Book(id,resultAuthorsList,title,resultGenresList,pageCount,annotation,rating);
-        return new Book(id,resultAuthorsList,title,resultGenresList,pageCount,annotation,rating,year);
+            return new Book(id,resultAuthorsList,title,resultGenresList,pageCount,annotation,rating,imageName);
+
+        return new Book(id,resultAuthorsList,title,resultGenresList,pageCount,annotation,rating,year,imageName);
     }
 }

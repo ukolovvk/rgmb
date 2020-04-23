@@ -10,8 +10,9 @@ public class Book {
     private String annotation;
     private double rating;
     private int year;
+    private String imageName;
 
-    public Book(int id, List<Author> authors, String title, List<Genre> genres, int size, String annotation, double rating, int year) {
+    public Book(int id, List<Author> authors, String title, List<Genre> genres, int size, String annotation, double rating, int year, String imageName) {
         this.id = id;
         this.authors = authors;
         this.title = title;
@@ -20,9 +21,10 @@ public class Book {
         this.annotation = annotation;
         this.rating = rating;
         this.year = year;
+        this.imageName = imageName;
     }
 
-    public Book(int id, List<Author> authors, String title, List<Genre> genres, int size, String annotation, double rating) {
+    public Book(int id, List<Author> authors, String title, List<Genre> genres, int size, String annotation, double rating, String imageName) {
         this.id = id;
         this.authors = authors;
         this.title = title;
@@ -31,9 +33,10 @@ public class Book {
         this.annotation = annotation;
         this.rating = rating;
         this.year = 0;
+        this.imageName = imageName;
     }
 
-    public Book(List<Author> authors, String title, List<Genre> genres, int size, String annotation, double rating, int year) {
+    public Book(List<Author> authors, String title, List<Genre> genres, int size, String annotation, double rating, int year, String imageName) {
         this.authors = authors;
         this.title = title;
         this.genres = genres;
@@ -41,9 +44,10 @@ public class Book {
         this.annotation = annotation;
         this.rating = rating;
         this.year = year;
+        this.imageName = imageName;
     }
 
-    public Book(List<Author> authors, String title, List<Genre> genres, int size, String annotation, double rating) {
+    public Book(List<Author> authors, String title, List<Genre> genres, int size, String annotation, double rating, String imageName) {
         this.authors = authors;
         this.title = title;
         this.genres = genres;
@@ -51,6 +55,7 @@ public class Book {
         this.annotation = annotation;
         this.rating = rating;
         this.year = 0;
+        this.imageName = imageName;
     }
 
     public int getId() {
@@ -115,6 +120,14 @@ public class Book {
 
     public void setYear(int year) {
         this.year = year;
+    }
+
+    public String getImageName() {
+        return imageName;
+    }
+
+    public void setImageName(String imageName) {
+        this.imageName = imageName;
     }
 
 }

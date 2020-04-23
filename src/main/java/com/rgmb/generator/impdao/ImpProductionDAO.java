@@ -39,7 +39,11 @@ public class ImpProductionDAO implements ProductionDAO {
     @Override
     public Production findById(int id) {
         String SQL = "SELECT * FROM productions WHERE id = ?";
-        return template.queryForObject(SQL,new ProductionRowMapper(),id);
+        try {
+            return template.queryForObject(SQL, new ProductionRowMapper(), id);
+        }catch (EmptyResultDataAccessException ex){
+            return null;
+        }
     }
 
     @Override
@@ -51,7 +55,11 @@ public class ImpProductionDAO implements ProductionDAO {
     @Override
     public List<Production> findAll() {
         String SQL = "SELECT * FROM productions ";
-        return template.query(SQL,new ProductionRowMapper());
+        try {
+            return template.query(SQL, new ProductionRowMapper());
+        }catch (EmptyResultDataAccessException ex){
+            return null;
+        }
     }
 
     @Override

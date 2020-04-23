@@ -10,9 +10,19 @@ public class Game {
     private GameCompany company;
     private int releaseYear;
     private String annotation;
+    private String imageName;
+
+    public String getImageName() {
+        return imageName;
+    }
+
+    public void setImageName(String imageName) {
+        this.imageName = imageName;
+    }
 
 
-    public Game(int id, String title, List<GameGenre> genres, List<Country> countries, GameCompany company, int releaseYear, String annotation) {
+
+    public Game(int id, String title, List<GameGenre> genres, List<Country> countries, GameCompany company, int releaseYear, String annotation, String imageName) {
         this.id = id;
         this.title = title;
         this.genres = genres;
@@ -20,9 +30,10 @@ public class Game {
         this.company = company;
         this.releaseYear = releaseYear;
         this.annotation = annotation;
+        this.imageName = imageName;
     }
 
-    public Game(String title, List<GameGenre> genres, List<Country> countries, GameCompany company, int releaseYear, String annotation) {
+    public Game(String title, List<GameGenre> genres, List<Country> countries, GameCompany company, int releaseYear, String annotation, String imageName) {
         this.id = 0;
         this.title = title;
         this.genres = genres;
@@ -30,6 +41,7 @@ public class Game {
         this.company = company;
         this.releaseYear = releaseYear;
         this.annotation = annotation;
+        this.imageName = imageName;
     }
 
     public int getId() {

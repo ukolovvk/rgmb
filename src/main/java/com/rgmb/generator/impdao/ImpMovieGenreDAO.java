@@ -39,7 +39,11 @@ public class ImpMovieGenreDAO implements MovieGenreDAO {
     @Override
     public MovieGenre findById(int id) {
         String SQL = "SELECT * FROM movie_genres WHERE genre_id = ?";
-        return template.queryForObject(SQL, new MovieGenreRowMapper(),id);
+        try {
+            return template.queryForObject(SQL, new MovieGenreRowMapper(), id);
+        }catch (EmptyResultDataAccessException ex){
+            return null;
+        }
     }
 
     @Override
@@ -51,7 +55,11 @@ public class ImpMovieGenreDAO implements MovieGenreDAO {
     @Override
     public List<MovieGenre> findAll() {
         String SQL = "SELECT * FROM movie_genres";
-        return template.query(SQL, new MovieGenreRowMapper());
+        try {
+            return template.query(SQL, new MovieGenreRowMapper());
+        }catch (EmptyResultDataAccessException ex){
+            return null;
+        }
     }
 
     @Override

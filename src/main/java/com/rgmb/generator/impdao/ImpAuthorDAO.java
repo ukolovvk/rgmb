@@ -23,13 +23,21 @@ public class ImpAuthorDAO implements AuthorDAO {
     @Override
     public Author findById(int id) {
         String SQL = "SELECT * FROM authors WHERE id = ?";
-        return template.queryForObject(SQL,new AuthorRowMapper(),id);
+        try {
+            return template.queryForObject(SQL, new AuthorRowMapper(), id);
+        }catch (EmptyResultDataAccessException ex){
+            return null;
+        }
     }
 
     @Override
     public Author findByName(String name) {
         String SQL = "SELECT * FROM authors WHERE LOWER(name) = LOWER(?)";
-        return template.queryForObject(SQL,new AuthorRowMapper(),name);
+        try {
+            return template.queryForObject(SQL, new AuthorRowMapper(), name);
+        }catch (EmptyResultDataAccessException ex){
+            return null;
+        }
     }
 
     @Override
@@ -51,7 +59,11 @@ public class ImpAuthorDAO implements AuthorDAO {
     @Override
     public List<Author> findAll() {
         String SQL = "SELECT * FROM authors";
-        return  template.query(SQL,new AuthorRowMapper());
+        try {
+            return template.query(SQL, new AuthorRowMapper());
+        }catch (EmptyResultDataAccessException ex){
+            return null;
+        }
     }
 
     @Override
