@@ -69,6 +69,8 @@ public class ImpGameDAO implements GameDAO {
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE,propagation = Propagation.REQUIRED)
         public int add(Game game) {
+        if(game.getCountries() == null || game.getGenres() == null)
+            return -1;
         int companyID = companyDAO.findIdByGameCompanyName(game.getCompany().getName());
         if(companyID == 0)
             companyID = companyDAO.addWithReturningId(game.getCompany());

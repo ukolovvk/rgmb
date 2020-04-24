@@ -2,8 +2,6 @@ package com.rgmb.generator.impdao;
 
 import com.rgmb.generator.dao.MovieDAO;
 import com.rgmb.generator.entity.*;
-import com.rgmb.generator.exceptions.DaoException;
-import com.rgmb.generator.exceptions.IncorrectParametersDaoException;
 import com.rgmb.generator.mappers.MovieRowMapper;
 import com.rgmb.generator.mappers.MovieRowMapperForFindId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,11 +97,14 @@ public class ImpMovieDAO implements MovieDAO {
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE,propagation = Propagation.REQUIRED)
     public int add(Movie movie) {
+        if(movie.getGenreList() == null || movie.getCountryList() == null || movie.getListActors() == null)
+            return 0;
         int productionID = productionDAO.findIdByProductionName(movie.getProduction().getName());
         if(productionID == 0)
             productionID = productionDAO.addWithReturningId(movie.getProduction());
         String SQL = "INSERT INTO movies(movie_title, production_id, rating, annotation, runtime, image, release_date) VALUES (?,?,?,?,?,?,?) RETURNING movie_id";
-        int movieID = template.queryForObject(SQL, new MovieRowMapperForFindId(),movie.getTitle(), productionID, movie.getRating(), movie.getAnnotation(), movie.getRuntime(), movie.getUrlImage(), movie.getReleaseDate());
+        int movieID = template.queryForObject(SQL, new MovieRowMapperForFindId(),  movie.getTitle(), productionID, movie.getRating(), movie.getAnnotation(), movie.getRuntime(), movie.getUrlImage(), movie.getReleaseDate());
+
         for(MovieGenre genre : movie.getGenreList()){
             int localID = movieGenreDAO.findIdByMovieGenreName(genre.getName());
             if(localID == 0)
@@ -171,7 +172,7 @@ public class ImpMovieDAO implements MovieDAO {
     }
 
     @Override
-    public Movie getRandomMovie(MovieGenre genre) throws DaoException{
+    public Movie getRandomMovie(MovieGenre genre){
         String SQL = generalSelect + " WHERE movies.movie_id >= (SELECT ROUND(RANDOM() * (SELECT MAX(movie_id) FROM movies))) AND mgt.genres ILIKE '%?%' LIMIT 1 ";
         try {
             return template.queryForObject(SQL, new MovieRowMapper(), genre.getName());
@@ -181,7 +182,7 @@ public class ImpMovieDAO implements MovieDAO {
     }
 
     @Override
-    public Movie getRandomMovie(int firstYear, int secondYear) throws DaoException{
+    public Movie getRandomMovie(int firstYear, int secondYear) {
         String SQL = generalSelect + " WHERE movies.movie_id >= (SELECT ROUND(RANDOM() * (SELECT MAX(movie_id) FROM movies))) AND (movies.release_date BETWEEN ? AND ?)  LIMIT 1";
         try {
             return template.queryForObject(SQL, new MovieRowMapper(), firstYear, secondYear);
@@ -191,7 +192,7 @@ public class ImpMovieDAO implements MovieDAO {
     }
 
     @Override
-    public Movie getRandomMovie(MovieGenre genre, int firstYear, int secondYear) throws DaoException{
+    public Movie getRandomMovie(MovieGenre genre, int firstYear, int secondYear) {
         String SQL = generalSelect + " WHERE movies.movie_id >= (SELECT ROUND(RANDOM() * (SELECT MAX(movie_id) FROM movies))) AND (movies.release_date BETWEEN ? AND ?) AND mgt.genres ILIKE '%?%'  LIMIT 1";
         try {
             return template.queryForObject(SQL, new MovieRowMapper(), firstYear, secondYear, genre.getName());
@@ -201,7 +202,7 @@ public class ImpMovieDAO implements MovieDAO {
     }
 
     @Override
-    public Movie getRandomMovie(Production production) throws DaoException{
+    public Movie getRandomMovie(Production production) {
         String SQL = generalSelect + "  WHERE movies.movie_id >= (SELECT ROUND(RANDOM() * (SELECT MAX(movie_id) FROM movies))) AND prod.production_name ILIKE '%?%' LIMIT 1 ";
         try {
             return template.queryForObject(SQL, new MovieRowMapper(), production.getName());
@@ -211,7 +212,7 @@ public class ImpMovieDAO implements MovieDAO {
     }
 
     @Override
-    public Movie getRandomMovie(MovieGenre genre, Production production) throws DaoException{
+    public Movie getRandomMovie(MovieGenre genre, Production production){
         String SQL = generalSelect + " WHERE movies.movie_id >= (SELECT ROUND(RANDOM() * (SELECT MAX(movie_id) FROM movies))) AND prod.production_name ILIKE '%?%' AND  mgt.genres ILIKE '%?%' LIMIT 1";
         try {
             return template.queryForObject(SQL, new MovieRowMapper(), production.getName(), genre.getName());
@@ -221,7 +222,7 @@ public class ImpMovieDAO implements MovieDAO {
     }
 
     @Override
-    public Movie getRandomMovie(int firstYear, int secondYear, Production production) throws DaoException{
+    public Movie getRandomMovie(int firstYear, int secondYear, Production production) {
         String SQL = generalSelect + " WHERE movies.movie_id >= (SELECT ROUND(RANDOM() * (SELECT MAX(movie_id) FROM movies))) AND (movies.release_date BETWEEN ? AND ?) AND prod.production_name ILIKE '%?%' LIMIT 1";
         try {
             return template.queryForObject(SQL, new MovieRowMapper(), firstYear, secondYear,production.getName());
@@ -231,7 +232,7 @@ public class ImpMovieDAO implements MovieDAO {
     }
 
     @Override
-    public Movie getRandomMovie(MovieGenre genre, int firstYear, int secondYear, Production production) throws DaoException{
+    public Movie getRandomMovie(MovieGenre genre, int firstYear, int secondYear, Production production){
         String SQL = generalSelect + " WHERE movies.movie_id >= (SELECT ROUND(RANDOM() * (SELECT MAX(movie_id) FROM movies))) AND (movies.release_date BETWEEN ? AND ?) AND prod.production_name ILIKE '%?%' AND mgt.genres ILIKE '%?%' LIMIT 1";
         try {
             return template.queryForObject(SQL, new MovieRowMapper(), firstYear, secondYear, production.getName(), genre.getName());
@@ -247,25 +248,19 @@ public class ImpMovieDAO implements MovieDAO {
     }
 
     @Override
-    public int updateRatingById(int id, double rating) throws IncorrectParametersDaoException{
-        if(rating < 0 || rating > 10)
-            throw new IncorrectParametersDaoException("Incorrect parameters ... ");
+    public int updateRatingById(int id, double rating) {
         String SQL = "UPDATE movies SET title = ? WHERE movie_id = ?";
         return template.update(SQL,rating,id);
     }
 
     @Override
-    public int updateRuntimeById(int id, int runtime) throws IncorrectParametersDaoException{
-        if(runtime < 0 || runtime > 1000)
-            throw new IncorrectParametersDaoException("Incorrect parameters...");
+    public int updateRuntimeById(int id, int runtime){
         String SQL = "UPDATE movies SET runtime = ? WHERE movie_id = ?";
         return template.update(SQL,runtime,id);
     }
 
     @Override
-    public int updateDateReleaseById(int id, int year) throws IncorrectParametersDaoException{
-        if(year < 0)
-            throw new IncorrectParametersDaoException("Incorrect parameters...");
+    public int updateDateReleaseById(int id, int year){
         String SQL = "UPDATE movies SET release_date = ? WHERE movie_id = ?";
         return template.update(SQL,year,id);
     }

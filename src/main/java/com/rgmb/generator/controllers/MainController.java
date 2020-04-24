@@ -1,17 +1,16 @@
 package com.rgmb.generator.controllers;
 
-import com.rgmb.generator.entity.Actor;
 import com.rgmb.generator.entity.Book;
 import com.rgmb.generator.entity.Game;
+import com.rgmb.generator.entity.Movie;
 import com.rgmb.generator.impdao.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RestController("/")
+@RestController()
 public class MainController {
     @Autowired
     @Qualifier("bookDAO")
@@ -22,38 +21,49 @@ public class MainController {
     ImpMovieDAO movieDAO;
 
     @Autowired
-    @Qualifier("actorDAO")
-    ImpActorDAO actorDAO;
-
-    @Autowired
-    @Qualifier("ProductionDAO")
-    ImpProductionDAO productionDAO;
-
-    @Autowired
-    @Qualifier("CompanyDAO")
-    ImpCompanyDAO companyDAO;
-
-    @Autowired
     @Qualifier("ImpGameDAO")
     ImpGameDAO gameDAO;
 
-    @GetMapping("/hello")
-    public ResponseEntity<Game> hello(){
-        return  new ResponseEntity<>(gameDAO.getRandomGame(),HttpStatus.ACCEPTED);
+    @GetMapping("/randombook")
+    public ResponseEntity<Book> getRandomBook(){
+        Book book = bookDao.getRandomBook();
+        return book == null ? new ResponseEntity<>(HttpStatus.NOT_FOUND) : new ResponseEntity<>(book,HttpStatus.OK);
     }
 
-    @PostMapping(value = "/hellopost", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> hellopost(@RequestBody Game game){
-        gameDAO.add(game);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    @GetMapping("/randommovie")
+    public ResponseEntity<Movie> getRandomMovie(){
+        Movie movie = movieDAO.getRandomMovie();
+        return movie == null ? new ResponseEntity<>(HttpStatus.NOT_FOUND) : new ResponseEntity<>(movie,HttpStatus.OK);
     }
 
-    @GetMapping("/rgmb")
-    public String rgmbLook(){
-        Book book = bookDao.findById(4);
-        if(book == null)
-            System.out.println("ok");
-        return "index";
+    @GetMapping("/randomgame")
+    public ResponseEntity<Game> getRandomGame(){
+        Game game = gameDAO.getRandomGame();
+        return game == null ? new ResponseEntity<>(HttpStatus.NOT_FOUND) : new ResponseEntity<>(game,HttpStatus.OK);
+    }
+
+    @PostMapping("/addgame")
+    public ResponseEntity<?> addNewGame(@RequestBody Game game){
+        int local = gameDAO.add(game);
+        if(local == 1)
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    @PostMapping("addmovie")
+    public ResponseEntity<?> addNewMovie(@RequestBody Movie movie){
+        int local = movieDAO.add(movie);
+        if(local == 1)
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    @PostMapping("addbook")
+    public ResponseEntity<?> addNewBook(@RequestBody Book book){
+        int local = bookDao.add(book);
+        if(local == 1)
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
 }

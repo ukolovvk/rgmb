@@ -1,8 +1,6 @@
 package com.rgmb.generator.dao;
 
 import com.rgmb.generator.entity.*;
-import com.rgmb.generator.exceptions.DaoException;
-import com.rgmb.generator.exceptions.IncorrectParametersDaoException;
 
 import java.util.List;
 
@@ -11,27 +9,27 @@ public interface MovieDAO extends GeneralMovieDAO<Movie> {
 
     List<Movie> getRandomMovies(int numberOfMovies) ;
 
-    Movie getRandomMovie(MovieGenre genre) throws DaoException;
+    Movie getRandomMovie(MovieGenre genre);
 
-    Movie getRandomMovie(int firstYear, int secondYear) throws DaoException;
+    Movie getRandomMovie(int firstYear, int secondYear) ;
 
-    Movie getRandomMovie(MovieGenre genre, int firstYear, int secondYear) throws DaoException;
+    Movie getRandomMovie(MovieGenre genre, int firstYear, int secondYear) ;
 
-    Movie getRandomMovie(Production production) throws DaoException;
+    Movie getRandomMovie(Production production) ;
 
-    Movie getRandomMovie(MovieGenre genre, Production production) throws DaoException;
+    Movie getRandomMovie(MovieGenre genre, Production production) ;
 
-    Movie getRandomMovie(int firstYear, int secondYear, Production production) throws DaoException;
+    Movie getRandomMovie(int firstYear, int secondYear, Production production) ;
 
-    Movie getRandomMovie(MovieGenre genre, int firstYear, int secondYear, Production production) throws DaoException;
+    Movie getRandomMovie(MovieGenre genre, int firstYear, int secondYear, Production production) ;
 
     int updateTitleById(int id, String title);
 
-    int updateRatingById(int id, double rating) throws IncorrectParametersDaoException;
+    int updateRatingById(int id, double rating) ;
 
-    int updateRuntimeById(int id, int runtime) throws IncorrectParametersDaoException;
+    int updateRuntimeById(int id, int runtime);
 
-    int updateDateReleaseById(int id, int year) throws IncorrectParametersDaoException;
+    int updateDateReleaseById(int id, int year);
 
     int updateProductionById(int id, Production production);
 

@@ -16,6 +16,8 @@ public class Movie {
     private String annotation;
     private String urlImage;
 
+    public Movie(){}
+
     public Movie(long id, String title, int releaseDate, List<Country> countryList, Production production, List<MovieGenre> genreList, double rating, int runtime, List<Actor> listActors, String annotation, String urlImage) {
         this.id = id;
         this.title = title;
@@ -41,6 +43,7 @@ public class Movie {
         this.listActors = listActors;
         this.annotation = annotation;
         this.urlImage = urlImage;
+        this.id = 0;
     }
 
     public String getUrlImage() {

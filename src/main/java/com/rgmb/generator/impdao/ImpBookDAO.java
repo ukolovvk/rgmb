@@ -72,6 +72,8 @@ public class ImpBookDAO implements BookDAO {
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE,propagation = Propagation.REQUIRED)
     public int add(Book book) {
+        if(book.getGenres() == null || book.getAuthors() == null)
+            return 0;
         String SQL = "INSERT INTO books(title,page_count,rating,year, annotation, image) VALUES(?,?,?,?,?,?) RETURNING book_id";
         int bookID = template.queryForObject(SQL,new BookRowMapperForFindByBookName(), book.getTitle(),book.getSize(),book.getRating(),book.getYear(),book.getAnnotation(),book.getImageName());
         for(Genre genre : book.getGenres()){
