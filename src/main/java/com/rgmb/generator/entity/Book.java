@@ -12,6 +12,8 @@ public class Book {
     private int year;
     private String imageName;
 
+    public Book (){}
+
     public Book(int id, List<Author> authors, String title, List<Genre> genres, int size, String annotation, double rating, int year, String imageName) {
         this.id = id;
         this.authors = authors;

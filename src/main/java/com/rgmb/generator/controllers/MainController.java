@@ -24,6 +24,11 @@ public class MainController {
     @Qualifier("ImpGameDAO")
     ImpGameDAO gameDAO;
 
+    @GetMapping("hello")
+    public void hello(){
+        System.out.println(movieDAO.getRandomMovie().getTitle());
+    }
+
     @GetMapping("/randombook")
     public ResponseEntity<Book> getRandomBook(){
         Book book = bookDao.getRandomBook();

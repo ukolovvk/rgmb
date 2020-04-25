@@ -182,7 +182,7 @@ public class ImpBookDAO implements BookDAO {
 
     @Override
     public Book getRandomBook() {
-        String SQL = generalSql + "WHERE books.book_id >= (SELECT ROUND(RANDOM() * (SELECT MAX(book_id) FROM books))) LIMIT 1";
+        String SQL = generalSql + " ORDER BY RANDOM() LIMIT 1";
         try {
             return template.queryForObject(SQL, new BookRowMapper());
         }catch (EmptyResultDataAccessException ex){

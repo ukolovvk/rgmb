@@ -153,7 +153,7 @@ public class ImpMovieDAO implements MovieDAO {
 
     @Override
     public Movie getRandomMovie() {
-        String SQL = generalSelect + " WHERE movies.movie_id >= (SELECT ROUND(RANDOM() * (SELECT MAX(movie_id) FROM movies))) LIMIT 1 ";
+        String SQL = generalSelect + " ORDER BY RANDOM() LIMIT 1 ";
         try {
             return template.queryForObject(SQL, new MovieRowMapper());
         }catch (EmptyResultDataAccessException ex){

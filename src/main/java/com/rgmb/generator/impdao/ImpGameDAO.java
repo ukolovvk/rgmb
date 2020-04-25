@@ -157,7 +157,7 @@ public class ImpGameDAO implements GameDAO {
 
     @Override
     public Game getRandomGame() {
-        String SQL = generalSql + "  WHERE games.game_id >= (SELECT ROUND(RANDOM() * (SELECT MAX(game_id) FROM games))) LIMIT 1";
+        String SQL = generalSql + "  ORDER BY RANDOM() LIMIT 1";
         try {
             return template.queryForObject(SQL, new GameRowMapper());
         }catch (EmptyResultDataAccessException ex){

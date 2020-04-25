@@ -20,6 +20,8 @@ public class Game {
         this.imageName = imageName;
     }
 
+    public Game() {}
+
 
 
     public Game(int id, String title, List<GameGenre> genres, List<Country> countries, GameCompany company, int releaseYear, String annotation, String imageName) {
