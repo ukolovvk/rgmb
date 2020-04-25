@@ -24,9 +24,9 @@ public class MainController {
     @Qualifier("ImpGameDAO")
     ImpGameDAO gameDAO;
 
-    @GetMapping("hello")
-    public void hello(){
-        System.out.println(movieDAO.getRandomMovie().getTitle());
+    @GetMapping("/")
+    public String hello(){
+        return "hello";
     }
 
     @GetMapping("/randombook")
