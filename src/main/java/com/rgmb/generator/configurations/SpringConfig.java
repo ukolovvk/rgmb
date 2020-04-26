@@ -16,7 +16,7 @@ import javax.sql.DataSource;
 @Configuration
 @ComponentScan(basePackages = "com.rgmb.generator")
 @EnableAspectJAutoProxy(proxyTargetClass = true)
-@EnableJpaRepositories(basePackages="com.rgmb.generator", entityManagerFactoryRef="emf")
+@EnableJpaRepositories(basePackages="com.rgmb.generator", entityManagerFactoryRef="entityManagerFactory")
 @EnableTransactionManagement
 public class SpringConfig  {
     @Bean("jdbcTemplate")
