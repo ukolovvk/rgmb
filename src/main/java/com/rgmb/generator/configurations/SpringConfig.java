@@ -9,6 +9,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
@@ -16,7 +17,7 @@ import javax.sql.DataSource;
 @Configuration
 @ComponentScan(basePackages = "com.rgmb.generator")
 @EnableAspectJAutoProxy(proxyTargetClass = true)
-@EnableJpaRepositories(basePackages="com.rgmb.generator", entityManagerFactoryRef="entityManagerFactory")
+//@EnableJpaRepositories(basePackages="com.rgmb.generator", entityManagerFactoryRef="entityManagerFactory")
 @EnableTransactionManagement
 public class SpringConfig  {
     @Bean("jdbcTemplate")
@@ -33,6 +34,13 @@ public class SpringConfig  {
         dataSource.setUsername("postgres");
         dataSource.setPassword("11number");
         return dataSource;
+    }
+
+    @Bean(name="entityManagerFactory")
+    public LocalSessionFactoryBean sessionFactory() {
+        LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
+
+        return sessionFactory;
     }
 
 }
