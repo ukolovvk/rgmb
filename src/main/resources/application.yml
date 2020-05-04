@@ -1,9 +1,9 @@
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: ${JDBC_DATABASE_URL :jdbc:postgresql://localhost:10111/rgmbdatabase}
-    username: ${JDBC_DATABASE_USERNAME :postgres}
-    password: ${JDBC_DATABASE_PASSWORD :11number}
+    url: ${JDBC_DATABASE_URL}
+    username: ${JDBC_DATABASE_USERNAME}
+    password: ${JDBC_DATABASE_PASSWORD}
 
   aop:
     auto: false

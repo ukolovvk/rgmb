@@ -16,12 +16,12 @@ import javax.sql.DataSource;
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableTransactionManagement
 public class SpringConfig  {
-    @Bean("jdbcTemplate")
+   /* @Bean("jdbcTemplate")
     public JdbcTemplate getJdbcTemplate() {
         return new JdbcTemplate(getDataSource());
-    }
+    }*/
 
-    @Bean
+    /*@Bean
     public DataSource getDataSource() {
         //return new DriverManagerDataSource();
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
@@ -30,6 +30,6 @@ public class SpringConfig  {
         dataSource.setUsername("postgres");
         dataSource.setPassword("11number");
         return dataSource;
-    }
+    }*/
 
 }
