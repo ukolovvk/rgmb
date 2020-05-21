@@ -87,9 +87,7 @@ public class MainController {
     @GetMapping("/getMovie/{id}")
     public ResponseEntity<Movie> getMovieById(@PathVariable(name = "id") int id){
         Movie localMovie = movieDAO.findById(id);
-        if(localMovie == null)
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(localMovie,HttpStatus.OK);
+        return localMovie == null ?  new ResponseEntity<>(HttpStatus.NOT_FOUND) :  new ResponseEntity<>(localMovie,HttpStatus.OK);
     }
 
     @PostMapping("/addmanymovies")
@@ -107,9 +105,7 @@ public class MainController {
     @GetMapping("/randommoviewithgenre/{movieGenre}")
     public ResponseEntity<Movie> getRandomMovieWithGenre(@PathVariable(name = "movieGenre") String movieGenre){
         Movie movie = movieDAO.getRandomMovie(new MovieGenre(movieGenre));
-        if(movie == null)
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(movie,HttpStatus.OK);
+        return movie == null ? new ResponseEntity<>(HttpStatus.NOT_FOUND) : new ResponseEntity<>(movie,HttpStatus.OK);
     }
 
     @GetMapping("/getallmoviegenres")
@@ -120,10 +116,32 @@ public class MainController {
             if(!genre.getName().contains(","))
                 resultList.add(genre);
         }
-        if(localList == null)
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(localList,HttpStatus.OK);
+        return localList == null ? new ResponseEntity<>(HttpStatus.NOT_FOUND) : new ResponseEntity<>(localList,HttpStatus.OK);
     }
+
+    @GetMapping("/randommovieswithyears/{yearFirst}-{yearSecond}")
+    public ResponseEntity<Movie> getRandomMovieWithYears(@PathVariable(name = "yearFirst") Integer firstYear,@PathVariable(name = "yearSecond") Integer secondYear){
+        Movie movie = movieDAO.getRandomMovie(firstYear,secondYear);
+        return movie == null ? new ResponseEntity<>(HttpStatus.NOT_FOUND) : new ResponseEntity<>(movie,HttpStatus.OK);
+    }
+
+    @GetMapping("/getminmaxyearsmovies")
+    public ResponseEntity<List<Integer>> getMinMaxYearsMovies(){
+        int minYear = movieDAO.getMinYear();
+        int maxYear = movieDAO.getMaxYear();
+        List<Integer> localList = new ArrayList<>(2);
+        localList.add(minYear);localList.add(maxYear);
+        return new ResponseEntity<>(localList, HttpStatus.OK);
+    }
+
+    @GetMapping("/randommoviewithgenreandyears/{genreName}/{yearFirst}_{yearSecond}")
+    public ResponseEntity<Movie> getMovieWithGenreAndYears(@PathVariable(name = "genreName") String genreName,@PathVariable(name = "yearFirst") int firstYear,@PathVariable(name = "yearSecond") int secondYear){
+        Movie movie = movieDAO.getRandomMovie(new MovieGenre(genreName),firstYear,secondYear);
+        return movie == null ? new ResponseEntity<>(HttpStatus.NOT_FOUND) : new ResponseEntity<>(movie,HttpStatus.OK);
+    }
+
+
+
 
 
 

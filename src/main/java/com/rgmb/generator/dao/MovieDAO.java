@@ -21,6 +21,10 @@ public interface MovieDAO extends GeneralMovieDAO<Movie> {
 
     Movie getRandomMovie(MovieGenre genre, int firstYear, int secondYear, Production production) ;
 
+    int getMinYear();
+
+    int getMaxYear();
+
     int updateTitleById(int id, String title);
 
     int updateRatingById(int id, double rating) ;

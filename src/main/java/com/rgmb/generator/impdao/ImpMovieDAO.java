@@ -8,11 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -231,6 +234,18 @@ public class ImpMovieDAO implements MovieDAO {
         }catch (EmptyResultDataAccessException ex){
             return null;
         }
+    }
+
+    @Override
+    public int getMaxYear() {
+        String SQL = "SELECT MAX(movies.release_date) AS max_year FROM movies";
+        return template.queryForObject(SQL,(ResultSet resultSet,int i) -> resultSet.getInt("max_year"));
+    }
+
+    @Override
+    public int getMinYear() {
+        String SQL = "SELECT MIN(movies.release_date) AS min_year FROM movies";
+        return template.queryForObject(SQL,(ResultSet resultSet, int i) -> resultSet.getInt("min_year"));
     }
 
     @Override
