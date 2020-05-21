@@ -13,7 +13,9 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository("MovieDAO")
 @Transactional(isolation = Isolation.READ_COMMITTED)
@@ -162,20 +164,10 @@ public class ImpMovieDAO implements MovieDAO {
     }
 
     @Override
-    public List<Movie> getRandomMovies(int numberOfMovies) {
-        String SQL = generalSelect + " WHERE movies.movie_id >= (SELECT ROUND(RANDOM() * (SELECT MAX(movie_id) FROM movies))) LIMIT ?";
-        try {
-            return template.query(SQL, new MovieRowMapper(), numberOfMovies);
-        }catch (EmptyResultDataAccessException ex){
-            return null;
-        }
-    }
-
-    @Override
     public Movie getRandomMovie(MovieGenre genre){
-        String SQL = generalSelect + " WHERE movies.movie_id >= (SELECT ROUND(RANDOM() * (SELECT MAX(movie_id) FROM movies))) AND mgt.genres ILIKE '%?%' LIMIT 1 ";
+        String SQL = generalSelect + " WHERE mgt.genres ILIKE '%" + genre.getName() + "%' ORDER BY RANDOM() LIMIT 1";
         try {
-            return template.queryForObject(SQL, new MovieRowMapper(), genre.getName());
+            return template.queryForObject(SQL, new MovieRowMapper());
         }catch (EmptyResultDataAccessException ex){
             return null;
         }
@@ -183,7 +175,7 @@ public class ImpMovieDAO implements MovieDAO {
 
     @Override
     public Movie getRandomMovie(int firstYear, int secondYear) {
-        String SQL = generalSelect + " WHERE movies.movie_id >= (SELECT ROUND(RANDOM() * (SELECT MAX(movie_id) FROM movies))) AND (movies.release_date BETWEEN ? AND ?)  LIMIT 1";
+        String SQL = generalSelect + " WHERE movies.release_date BETWEEN ? AND ?  ORDER BY RANDOM()  LIMIT 1";
         try {
             return template.queryForObject(SQL, new MovieRowMapper(), firstYear, secondYear);
         }catch (EmptyResultDataAccessException ex){
@@ -193,9 +185,9 @@ public class ImpMovieDAO implements MovieDAO {
 
     @Override
     public Movie getRandomMovie(MovieGenre genre, int firstYear, int secondYear) {
-        String SQL = generalSelect + " WHERE movies.movie_id >= (SELECT ROUND(RANDOM() * (SELECT MAX(movie_id) FROM movies))) AND (movies.release_date BETWEEN ? AND ?) AND mgt.genres ILIKE '%?%'  LIMIT 1";
+        String SQL = generalSelect + " WHERE  (movies.release_date BETWEEN ? AND ?) AND mgt.genres ILIKE '%" + genre.getName() +  "%'  ORDER BY RANDOM()  LIMIT 1";
         try {
-            return template.queryForObject(SQL, new MovieRowMapper(), firstYear, secondYear, genre.getName());
+            return template.queryForObject(SQL, new MovieRowMapper(), firstYear, secondYear);
         }catch (EmptyResultDataAccessException ex){
             return null;
         }
@@ -203,9 +195,9 @@ public class ImpMovieDAO implements MovieDAO {
 
     @Override
     public Movie getRandomMovie(Production production) {
-        String SQL = generalSelect + "  WHERE movies.movie_id >= (SELECT ROUND(RANDOM() * (SELECT MAX(movie_id) FROM movies))) AND prod.production_name ILIKE '%?%' LIMIT 1 ";
+        String SQL = generalSelect + "  WHERE prod.production_name ILIKE '%" + production.getName() +  "%' ORDER BY RANDOM()  LIMIT 1 ";
         try {
-            return template.queryForObject(SQL, new MovieRowMapper(), production.getName());
+            return template.queryForObject(SQL, new MovieRowMapper());
         }catch (EmptyResultDataAccessException ex){
             return null;
         }
@@ -213,9 +205,9 @@ public class ImpMovieDAO implements MovieDAO {
 
     @Override
     public Movie getRandomMovie(MovieGenre genre, Production production){
-        String SQL = generalSelect + " WHERE movies.movie_id >= (SELECT ROUND(RANDOM() * (SELECT MAX(movie_id) FROM movies))) AND prod.production_name ILIKE '%?%' AND  mgt.genres ILIKE '%?%' LIMIT 1";
+        String SQL = generalSelect + " WHERE  prod.production_name ILIKE '%" + production.getName() + "%' AND  mgt.genres ILIKE '%" + genre.getName() + "%' ORDER BY RANDOM()  LIMIT 1";
         try {
-            return template.queryForObject(SQL, new MovieRowMapper(), production.getName(), genre.getName());
+            return template.queryForObject(SQL, new MovieRowMapper());
         }catch (EmptyResultDataAccessException ex){
             return null;
         }
@@ -223,9 +215,9 @@ public class ImpMovieDAO implements MovieDAO {
 
     @Override
     public Movie getRandomMovie(int firstYear, int secondYear, Production production) {
-        String SQL = generalSelect + " WHERE movies.movie_id >= (SELECT ROUND(RANDOM() * (SELECT MAX(movie_id) FROM movies))) AND (movies.release_date BETWEEN ? AND ?) AND prod.production_name ILIKE '%?%' LIMIT 1";
+        String SQL = generalSelect + " WHERE  (movies.release_date BETWEEN ? AND ?) AND prod.production_name ILIKE '%" + production.getName() + "%' LIMIT 1";
         try {
-            return template.queryForObject(SQL, new MovieRowMapper(), firstYear, secondYear,production.getName());
+            return template.queryForObject(SQL, new MovieRowMapper(), firstYear, secondYear);
         }catch (EmptyResultDataAccessException ex){
             return null;
         }
@@ -233,9 +225,9 @@ public class ImpMovieDAO implements MovieDAO {
 
     @Override
     public Movie getRandomMovie(MovieGenre genre, int firstYear, int secondYear, Production production){
-        String SQL = generalSelect + " WHERE movies.movie_id >= (SELECT ROUND(RANDOM() * (SELECT MAX(movie_id) FROM movies))) AND (movies.release_date BETWEEN ? AND ?) AND prod.production_name ILIKE '%?%' AND mgt.genres ILIKE '%?%' LIMIT 1";
+        String SQL = generalSelect + " WHERE (movies.release_date BETWEEN ? AND ?) AND prod.production_name ILIKE '%" + production.getName() + "%' AND mgt.genres ILIKE '%" + genre.getName() + "%' LIMIT 1";
         try {
-            return template.queryForObject(SQL, new MovieRowMapper(), firstYear, secondYear, production.getName(), genre.getName());
+            return template.queryForObject(SQL, new MovieRowMapper(), firstYear, secondYear);
         }catch (EmptyResultDataAccessException ex){
             return null;
         }

@@ -7,8 +7,6 @@ import java.util.List;
 public interface MovieDAO extends GeneralMovieDAO<Movie> {
     Movie getRandomMovie();
 
-    List<Movie> getRandomMovies(int numberOfMovies) ;
-
     Movie getRandomMovie(MovieGenre genre);
 
     Movie getRandomMovie(int firstYear, int secondYear) ;
