@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.ResultSet;
 import java.util.List;
 
 @Repository("bookDAO")
@@ -171,6 +172,18 @@ public class ImpBookDAO implements BookDAO {
     }
 
     @Override
+    public double getMinRating() {
+        String SQL = "SELECT MIN(rating) AS min_rating FROM books";
+        return template.queryForObject(SQL, (ResultSet resultSet, int i) -> resultSet.getDouble("min_rating"));
+    }
+
+    @Override
+    public double getMaxRating() {
+        String SQL = "SELECT MAX(rating) AS max_rating FROM books";
+        return template.queryForObject(SQL, (ResultSet resultSet, int i) -> resultSet.getDouble("max_rating"));
+    }
+
+    @Override
     public List<Book> findByTitle(String title) {
         String SQL = generalSql + " WHERE LOWER(title) = LOWER(?)";
         try {
@@ -192,9 +205,9 @@ public class ImpBookDAO implements BookDAO {
 
     @Override
     public Book getRandomBook(Genre genre) {
-        String SQL = generalSql + "WHERE books.book_id >= (SELECT ROUND(RANDOM() * (SELECT MAX(book_id) FROM books))) AND bgt.genres ILIKE '%?%' LIMIT 1";
+        String SQL = generalSql + "WHERE bgt.genres ILIKE '%" + genre.getName() + "%' ORDER BY RANDOM() LIMIT 1";
         try {
-            return template.queryForObject(SQL, new BookRowMapper(), genre.getName());
+            return template.queryForObject(SQL, new BookRowMapper());
         }catch (EmptyResultDataAccessException ex){
             return null;
         }
@@ -202,7 +215,7 @@ public class ImpBookDAO implements BookDAO {
 
     @Override
     public Book getRandomBook(double FirstRating, double SecondRating) {
-        String SQL = generalSql + "WHERE books.book_id >= (SELECT ROUND(RANDOM() * (SELECT MAX(book_id) FROM books))) AND (books.rating BETWEEN ?,?)  LIMIT 1";
+        String SQL = generalSql + "WHERE (books.rating BETWEEN ? AND ?)  ORDER BY RANDOM() LIMIT 1";
         try {
             return template.queryForObject(SQL, new BookRowMapper(), FirstRating, SecondRating);
         }catch (EmptyResultDataAccessException ex){
@@ -212,7 +225,7 @@ public class ImpBookDAO implements BookDAO {
 
     @Override
     public Book getRandomBook(int minSize, int maxSize) {
-        String SQL = generalSql + "WHERE books.book_id >= (SELECT ROUND(RANDOM() * (SELECT MAX(book_id) FROM books))) AND (books.page_count BETWEEN ?,?)  LIMIT 1";
+        String SQL = generalSql + "WHERE  (books.page_count BETWEEN ? AND ?)  ORDER BY RANDOM() LIMIT 1";
         try {
             return template.queryForObject(SQL, new BookRowMapper(), minSize, maxSize);
         }catch(EmptyResultDataAccessException ex){
@@ -222,9 +235,9 @@ public class ImpBookDAO implements BookDAO {
 
     @Override
     public Book getRandomBook(Genre genre, double FirstRating, double SecondRating) {
-        String SQL = generalSql + "WHERE books.book_id >= (SELECT ROUND(RANDOM() * (SELECT MAX(book_id) FROM books))) AND (books.rating BETWEEN ?,?) AND bgt.genres ILIKE '%?%'  LIMIT 1";
+        String SQL = generalSql + "WHERE (books.rating BETWEEN ? AND ?) AND bgt.genres ILIKE '%" + genre.getName() + "%'  ORDER BY RANDOM() LIMIT 1";
         try {
-            return template.queryForObject(SQL, new BookRowMapper(), FirstRating, SecondRating, genre.getName());
+            return template.queryForObject(SQL, new BookRowMapper(), FirstRating, SecondRating);
         }catch (EmptyResultDataAccessException ex){
             return null;
         }
@@ -232,9 +245,9 @@ public class ImpBookDAO implements BookDAO {
 
     @Override
     public Book getRandomBook(Genre genre, int minSize, int maxSize) {
-        String SQL = generalSql + "WHERE books.book_id >= (SELECT ROUND(RANDOM() * (SELECT MAX(book_id) FROM books))) AND (books.page_count BETWEEN ?,?) AND bgt.genres ILIKE '%?%'  LIMIT 1";
+        String SQL = generalSql + "WHERE (books.page_count BETWEEN ? AND ?) AND bgt.genres ILIKE '%" + genre.getName() + "%'  ORDER BY RANDOM() LIMIT 1";
         try {
-            return template.queryForObject(SQL, new BookRowMapper(), minSize, maxSize, genre.getName());
+            return template.queryForObject(SQL, new BookRowMapper(), minSize, maxSize);
         }catch (EmptyResultDataAccessException ex){
             return null;
         }
@@ -242,7 +255,7 @@ public class ImpBookDAO implements BookDAO {
 
     @Override
     public Book getRandomBook(double FirstRating, double SecondRating, int minSize, int maxSize) {
-        String SQL = generalSql + "WHERE books.book_id >= (SELECT ROUND(RANDOM() * (SELECT MAX(book_id) FROM books))) AND (books.page_count BETWEEN ?,?) AND  (books.rating BETWEEN ?,?) LIMIT 1";
+        String SQL = generalSql + "WHERE (books.page_count BETWEEN ? AND ?) AND  (books.rating BETWEEN ? AND ?) ORDER BY RANDOM() LIMIT 1";
         try {
             return template.queryForObject(SQL, new BookRowMapper(), minSize, maxSize, FirstRating, SecondRating);
         }catch (EmptyResultDataAccessException ex){
@@ -252,9 +265,9 @@ public class ImpBookDAO implements BookDAO {
 
     @Override
     public Book getRandomBook(Genre genre, double FirstRating, double SecondRating, int minSize, int maxSize) {
-        String SQL = generalSql + "WHERE books.book_id >= (SELECT ROUND(RANDOM() * (SELECT MAX(book_id) FROM books))) AND (books.page_count BETWEEN ?,?) AND  (books.rating BETWEEN ?,?) AND (bgt.genres ILIKE '%?%') LIMIT 1";
+        String SQL = generalSql + "WHERE (books.page_count BETWEEN ? AND ?) AND  (books.rating BETWEEN ? AND ?) AND (bgt.genres ILIKE '%" + genre.getName() + "%') ORDER BY RANDOM() LIMIT 1";
         try {
-            return template.queryForObject(SQL, new BookRowMapper(), minSize, maxSize, FirstRating, SecondRating, genre.getName());
+            return template.queryForObject(SQL, new BookRowMapper(), minSize, maxSize, FirstRating, SecondRating);
         }catch (EmptyResultDataAccessException ex){
             return null;
         }

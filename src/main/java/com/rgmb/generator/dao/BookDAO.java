@@ -24,6 +24,10 @@ public interface BookDAO extends GeneralBookDAO<Book>{
 
     int updateImageNameById(int  id, String imageName);
 
+    double getMinRating();
+
+    double getMaxRating();
+
     List<Book> findByTitle(String title);
 
     Book getRandomBook();

@@ -23,6 +23,10 @@ public interface GameDAO  extends GeneralGameDAO<Game>{
 
     int updateImageNameById(int id, String imageName);
 
+    int getMinYear();
+
+    int getMaxYear();
+
     List<Game> findByTitle(String title);
 
     Game getRandomGame();

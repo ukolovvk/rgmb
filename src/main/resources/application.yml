@@ -8,8 +8,6 @@ spring:
   aop:
     auto: false
 
-
-
   thymeleaf:
     enabled: true
     encoding: UTF-8

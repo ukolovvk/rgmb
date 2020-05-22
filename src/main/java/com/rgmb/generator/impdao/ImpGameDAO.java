@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.ResultSet;
 import java.util.List;
 
 @Repository("ImpGameDAO")
@@ -157,7 +158,7 @@ public class ImpGameDAO implements GameDAO {
 
     @Override
     public Game getRandomGame() {
-        String SQL = generalSql + "  ORDER BY RANDOM() LIMIT 1";
+        String SQL = generalSql + " ORDER BY RANDOM() LIMIT 1";
         try {
             return template.queryForObject(SQL, new GameRowMapper());
         }catch (EmptyResultDataAccessException ex){
@@ -167,9 +168,9 @@ public class ImpGameDAO implements GameDAO {
 
     @Override
     public Game getRandomGame(GameGenre genre) {
-        String SQL = generalSql + "  WHERE games.game_id >= (SELECT ROUND(RANDOM() * (SELECT MAX(game_id) FROM games))) AND ggt.genres ILIKE '%?%' LIMIT 1";
+        String SQL = generalSql + "  WHERE  ggt.genres ILIKE '%" + genre.getName() + "%' ORDER BY RANDOM() LIMIT 1";
         try {
-            return template.queryForObject(SQL, new GameRowMapper(), genre.getName());
+            return template.queryForObject(SQL, new GameRowMapper());
         }catch (EmptyResultDataAccessException ex){
             return null;
         }
@@ -177,7 +178,7 @@ public class ImpGameDAO implements GameDAO {
 
     @Override
     public Game getRandomGame(int firstYear, int secondYear) {
-        String SQL = generalSql + "  WHERE games.game_id >= (SELECT ROUND(RANDOM() * (SELECT MAX(game_id) FROM games))) AND (games.release_year BETWEEN ? AND ?) LIMIT 1";
+        String SQL = generalSql + "  WHERE (games.release_year BETWEEN ? AND ?) ORDER BY RANDOM() LIMIT 1";
         try {
             return template.queryForObject(SQL, new GameRowMapper(), firstYear, secondYear);
         }catch (EmptyResultDataAccessException ex){
@@ -187,9 +188,9 @@ public class ImpGameDAO implements GameDAO {
 
     @Override
     public Game getRandomGame(GameGenre genre, int firstYear, int secondYear) {
-        String SQL = generalSql + "  WHERE games.game_id >= (SELECT ROUND(RANDOM() * (SELECT MAX(game_id) FROM games))) AND (games.release_year BETWEEN ? AND ?) AND ggt.genres ILIKE '%?%' LIMIT 1";
+        String SQL = generalSql + "  WHERE (games.release_year BETWEEN ? AND ?) AND ggt.genres ILIKE '%" + genre.getName() + "%' LIMIT 1";
         try {
-            return template.queryForObject(SQL, new GameRowMapper(), firstYear, secondYear, genre.getName());
+            return template.queryForObject(SQL, new GameRowMapper(), firstYear, secondYear);
         }catch (EmptyResultDataAccessException ex){
             return null;
         }
@@ -225,5 +226,17 @@ public class ImpGameDAO implements GameDAO {
     public int updateImageNameById(int id, String imageName) {
         String SQL = "UPDATE games SET image = ? WHERE game_id = ?";
         return template.update(SQL,imageName,id);
+    }
+
+    @Override
+    public int getMinYear() {
+        String SQL = "SELECT MAX(release_year) AS max_year FROM games";
+        return template.queryForObject(SQL, (ResultSet resultSet,int i) -> resultSet.getInt("max_year"));
+    }
+
+    @Override
+    public int getMaxYear() {
+        String SQL = "SELECT MIN(release_year) AS min_year FROM games";
+        return template.queryForObject(SQL, (ResultSet resultSet,int i) -> resultSet.getInt("min_year"));
     }
 }

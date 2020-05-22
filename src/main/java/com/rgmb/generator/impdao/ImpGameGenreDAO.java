@@ -48,7 +48,7 @@ public class ImpGameGenreDAO implements GameGenreDAO {
 
     @Override
     public List<GameGenre> findAll() {
-        String SQL = "SELECT * FROM game_genres WHERE";
+        String SQL = "SELECT * FROM game_genres";
         try {
             return template.query(SQL, new GameGenreRowMapper());
         }catch (EmptyResultDataAccessException ex){

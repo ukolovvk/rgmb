@@ -1,9 +1,6 @@
 package com.rgmb.generator.controllers;
 
-import com.rgmb.generator.entity.Book;
-import com.rgmb.generator.entity.Game;
-import com.rgmb.generator.entity.Movie;
-import com.rgmb.generator.entity.MovieGenre;
+import com.rgmb.generator.entity.*;
 import com.rgmb.generator.impdao.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -31,6 +28,14 @@ public class MainController {
     @Autowired
     @Qualifier("movieGenreDAO")
     ImpMovieGenreDAO movieGenreDAO;
+
+    @Autowired
+    @Qualifier("genreDAO")
+    ImpGenreDAO bookGenreDAO;
+
+    @Autowired
+    @Qualifier("GameGenreDAO")
+    ImpGameGenreDAO gameGenreDAO;
 
     @GetMapping("/")
     public String hello(){
@@ -130,7 +135,7 @@ public class MainController {
         int minYear = movieDAO.getMinYear();
         int maxYear = movieDAO.getMaxYear();
         List<Integer> localList = new ArrayList<>(2);
-        localList.add(minYear);localList.add(maxYear);
+        localList.add(minYear); localList.add(maxYear);
         return new ResponseEntity<>(localList, HttpStatus.OK);
     }
 
@@ -140,9 +145,56 @@ public class MainController {
         return movie == null ? new ResponseEntity<>(HttpStatus.NOT_FOUND) : new ResponseEntity<>(movie,HttpStatus.OK);
     }
 
+    @GetMapping("/randombookwithgenre/{bookGenre}")
+    public ResponseEntity<Book> getRandomBookWithGenre(@PathVariable(name = "bookGenre") String bookGenre){
+        Book book = bookDao.getRandomBook(new Genre(bookGenre));
+        return book == null ? new ResponseEntity<>(HttpStatus.NOT_FOUND) : new ResponseEntity<>(book,HttpStatus.OK);
+    }
 
+    @GetMapping("/getallbookgenres")
+    public ResponseEntity<List<Genre>> getAllBookGenres(){
+        List<Genre> localList = bookGenreDAO.findAll();
+        return new ResponseEntity<>(localList,HttpStatus.OK);
+    }
 
+    @GetMapping("/getminmaxratingbooks")
+    public ResponseEntity<List<Double>> getMinMaxRatingBooks(){
+        double minRating = bookDao.getMinRating();
+        double maxRating = bookDao.getMaxRating();
+        List<Double> localList = new ArrayList<>(2);
+        localList.add(minRating); localList.add(maxRating);
+        return new ResponseEntity<>(localList,HttpStatus.OK);
+    }
 
+    @GetMapping("/randombookwithrating/{firstRating}_{secondRating}")
+    public ResponseEntity<Book> getRandomBookWithRating(@PathVariable(name = "firstRating") double firstRating, @PathVariable(name = "secondRating") double secondRating){
+        Book book = bookDao.getRandomBook(firstRating,secondRating);
+        return book == null ? new ResponseEntity<>(HttpStatus.NOT_FOUND) : new ResponseEntity<>(book,HttpStatus.OK);
+    }
+
+    @GetMapping("/randombookwithgenreandrating/{genre}/{firstRating}_{secondRating}")
+    public ResponseEntity<Book> getRandomBookWithRating(@PathVariable(name = "genre") String genre,@PathVariable(name = "firstRating") double firstRating,@PathVariable(name = "secondRating") double secondRating){
+        Book book = bookDao.getRandomBook(new Genre(genre),firstRating,secondRating);
+        return book == null ? new ResponseEntity<>(HttpStatus.NOT_FOUND) : new ResponseEntity<>(book,HttpStatus.OK);
+    }
+
+    @GetMapping("/getallgamegenres")
+    public ResponseEntity<List<GameGenre>> getAllGameGenres(){
+        List<GameGenre> localList = gameGenreDAO.findAll();
+        return new ResponseEntity<>(localList,HttpStatus.OK);
+    }
+
+    @GetMapping("/randomgamewithgenre/{genre}")
+    public ResponseEntity<Game> getRandomGameWithGenre(@PathVariable(name = "genre") String genre){
+        Game game = gameDAO.getRandomGame(new GameGenre(genre));
+        return game == null ? new ResponseEntity<>(HttpStatus.NOT_FOUND) : new ResponseEntity<>(game,HttpStatus.OK);
+    }
+
+    @GetMapping("/randomgamewithgenreandyears/{genre}/{firstYear}_{secondYear}")
+    public ResponseEntity<Game> getRandomGameWithGenreAndYears(@PathVariable(name = "genre") String genre, @PathVariable(name = "firstYear") int firstYear,@PathVariable(name = "secondYear") int secondYear){
+        Game game = gameDAO.getRandomGame(new GameGenre(genre),firstYear,secondYear);
+        return game == null ? new ResponseEntity<>(HttpStatus.NOT_FOUND) : new ResponseEntity<>(game,HttpStatus.OK);
+    }
 
 
 }
