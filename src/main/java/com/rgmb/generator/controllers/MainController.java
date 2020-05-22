@@ -196,6 +196,15 @@ public class MainController {
         return game == null ? new ResponseEntity<>(HttpStatus.NOT_FOUND) : new ResponseEntity<>(game,HttpStatus.OK);
     }
 
+    @GetMapping("/getminmaxyeargames")
+    public ResponseEntity<List<Integer>> getMinMaxYearGames(){
+        int minYear = gameDAO.getMinYear();
+        int maxYear = gameDAO.getMaxYear();
+        List<Integer> localList = new ArrayList<>();
+        localList.add(minYear);localList.add(maxYear);
+        return new ResponseEntity<>(localList,HttpStatus.OK);
+    }
+
 
 }
 
