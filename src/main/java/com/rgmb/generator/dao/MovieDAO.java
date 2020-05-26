@@ -4,6 +4,10 @@ import com.rgmb.generator.entity.*;
 
 import java.util.List;
 
+/**
+ * Интерфейс для сущности - фильм
+ * См реализацию в классе {@link com.rgmb.generator.impdao.ImpMovieDAO}
+ */
 public interface MovieDAO extends GeneralMovieDAO<Movie> {
     Movie getRandomMovie();
 

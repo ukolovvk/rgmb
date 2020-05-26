@@ -7,6 +7,10 @@ import com.rgmb.generator.entity.GameGenre;
 
 import java.util.List;
 
+/**
+ * Интерфейс для сущности - игра
+ * См реализацию в классе {@link com.rgmb.generator.impdao.ImpGameDAO}
+ */
 public interface GameDAO  extends GeneralGameDAO<Game>{
 
     int updateTitleById(int id,String title);

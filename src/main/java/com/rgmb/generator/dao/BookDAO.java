@@ -7,7 +7,13 @@ import com.rgmb.generator.entity.Genre;
 
 import java.util.List;
 
+/**
+ * Интерфейс для сущности книга
+ * См реализацию в классе {@link com.rgmb.generator.impdao.ImpBookDAO}
+ */
+
 public interface BookDAO extends GeneralBookDAO<Book>{
+
     int updateAnnotationById(int id,String annotation);
 
     int updateSizeById(int id,int size);
@@ -33,6 +39,7 @@ public interface BookDAO extends GeneralBookDAO<Book>{
     Book getRandomBook();
 
     Book getRandomBook(Genre genre);
+
 
     Book getRandomBook(double FirstRating, double SecondRating);
 

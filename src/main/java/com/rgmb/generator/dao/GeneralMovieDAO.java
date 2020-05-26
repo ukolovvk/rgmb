@@ -2,6 +2,9 @@ package com.rgmb.generator.dao;
 
 import java.util.List;
 
+/**
+ * Общий интерфейс для сущностей, связанных с фильмами
+ */
 public interface GeneralMovieDAO<T>{
 
     T findById(int id);

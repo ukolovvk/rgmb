@@ -2,6 +2,9 @@ package com.rgmb.generator.dao;
 
 import java.util.List;
 
+/**
+ * Общий интерфейс для сущностей, связанных с играми
+ */
 public interface GeneralGameDAO<T> {
     T findById(int id);
 

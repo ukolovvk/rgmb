@@ -19,33 +19,68 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.ResultSet;
 import java.util.List;
 
+
+/**
+ * Класс реализующий все методы интерфейса GameDAO
+ * Аннотация Repository показывает, что данный класс является репозиторием(реализует методы обращения к базе данных)
+ * Создает бин с именем ImpGameDAO
+ */
 @Repository("ImpGameDAO")
+/**
+ * Все методы класса выполняются в транзакции с уровнем изоляции READ_COMMITTED
+ * (Если у метода нет другой аннотации Transactional)
+ */
 @Transactional(isolation = Isolation.READ_COMMITTED)
 public class ImpGameDAO implements GameDAO {
-
+    /**
+     * Spring JDBC класс для реализации запросов
+     */
     @Autowired
     private JdbcTemplate template;
 
+    /**
+     * Класс, реализующих методы обращения к вспомогательной таблице игр и стран
+     * @see com.rgmb.generator.impdao.ImpGameUnionCountryDAO
+     */
     @Autowired
     @Qualifier("ImpGameUnionCountryDAO")
     private ImpGameUnionCountryDAO gameUnionCountryDAO;
 
+    /**
+     * Класс, реализующих методы обращения к вспомогательной таблице игр и жанров
+     * @see com.rgmb.generator.impdao.ImpGameUnionGenreDAO
+     */
     @Autowired
     @Qualifier("ImpGameUnionGenreDAO")
     private ImpGameUnionGenreDAO gameUnionGenreDAO;
 
+    /**
+     * Класс, реализующих методы обращения к таблице кинокомпаний
+     * @see com.rgmb.generator.impdao.ImpCompanyDAO
+     */
     @Autowired
     @Qualifier("CompanyDAO")
     private ImpCompanyDAO companyDAO;
 
+    /**
+     * Класс, реализующих методы обращения к таблице стран
+     * @see com.rgmb.generator.impdao.ImpCountryDAO
+     */
     @Autowired
     @Qualifier("countryDAO")
     private ImpCountryDAO countryDAO;
 
+    /**
+     * Класс, реализующих методы обращения к таблице жанров игр
+     * @see com.rgmb.generator.impdao.ImpGameGenreDAO
+     */
     @Autowired
     @Qualifier("GameGenreDAO")
     private ImpGameGenreDAO gameGenreDAO;
 
+    /**
+     * Основной запрос, объединяющий все таблицы, связанные с играми
+     */
     String generalSql = "WITH game_genre_table AS (SELECT games.game_id, string_agg(game_genres.genre_name,',') as genres\n" +
             "FROM games LEFT JOIN games_union_genres AS gug\n" +
             "ON games.game_id = gug.game_id\n" +
@@ -67,6 +102,11 @@ public class ImpGameDAO implements GameDAO {
             "LEFT JOIN company \n" +
             "ON games.company_id = company.company_id";
 
+    /**
+     * Добавление игры, а также добавление соответствуюших вспомогательных сущностей в соответствующие таблицы
+     * @param game игра {@link com.rgmb.generator.entity.Game}
+     * @return количество добавленных игр (1 или 0)
+     */
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE,propagation = Propagation.REQUIRED)
         public int add(Game game) {
@@ -92,25 +132,48 @@ public class ImpGameDAO implements GameDAO {
         return 1;
     }
 
-
+    /**
+     * Обновление названия игры по id
+     * @param id id игры
+     * @param title название игры
+     * @return количество обновленных строк
+     */
     @Override
     public int updateTitleById(int id, String title) {
         String SQL = "UPDATE games SET title = ? WHERE game_id = ?";
         return template.update(SQL, title,id);
     }
 
+    /**
+     * Обновление описания игры по id
+     * @param id id игры
+     * @param annotation описание игры
+     * @return количество обновленных строк
+     */
     @Override
     public int updateAnnotationById(int id, String annotation) {
         String SQL = "UPDATE games SET annotation = ? WHERE game_id = ?";
         return template.update(SQL, annotation,id);
     }
 
+    /**
+     * Обновление года выпуска игры по id
+     * @param id id игры
+     * @param releaseYear год выпуска игры
+     * @return количество обновленных строк
+     */
     @Override
     public int updateYearById(int id, int releaseYear) {
         String SQL = "UPDATE games SET release_year = ? WHERE game_id = ?";
         return template.update(SQL, releaseYear,id);
     }
 
+    /**
+     * Обновление компании по созданию игр по id
+     * @param id id игры
+     * @param company компания по созданию игр
+     * @return количество обновленных строк
+     */
     @Override
     public int updateCompany(int id, GameCompany company) {
         int companyID = companyDAO.findIdByGameCompanyName(company.getName());
@@ -120,6 +183,12 @@ public class ImpGameDAO implements GameDAO {
         return template.update(SQL,companyID,id);
     }
 
+    /**
+     * Обновление жанров игры по id
+     * @param id id игры
+     * @param gameGenres массив жанров игры {@link com.rgmb.generator.entity.GameGenre}
+     * @return количество обновленных строк
+     */
     @Override
     public int updateGameGenreById(int id, List<GameGenre> gameGenres) {
         String SQL = "DELETE FROM games_union_genres WHERE game_id = ?";
@@ -133,6 +202,12 @@ public class ImpGameDAO implements GameDAO {
         return gameGenres.size();
     }
 
+    /**
+     * Обновление стран по id
+     * @param id id игры
+     * @param countries массив стран {@link com.rgmb.generator.entity.Country}
+     * @return количество обновленных строк
+     */
     @Override
     public int updateCountriesById(int id, List<Country> countries) {
         String SQL = "DELETE FROM games_union_countries WHERE game_id = ?";
@@ -146,6 +221,11 @@ public class ImpGameDAO implements GameDAO {
         return countries.size();
     }
 
+    /**
+     * Поиск игры по названию
+     * @param title название игры
+     * @return массив игр на случай, если в базе найдется несколько игр с одинаковым названием
+     */
     @Override
     public List<Game> findByTitle(String title) {
         String SQL = generalSql + " WHERE games.title = ?";
@@ -156,6 +236,10 @@ public class ImpGameDAO implements GameDAO {
         }
     }
 
+    /**
+     * Получения рандомной игры из базы данных
+     * @return игра или null в том случае, если база пуста
+     */
     @Override
     public Game getRandomGame() {
         String SQL = generalSql + " ORDER BY RANDOM() LIMIT 1";
@@ -166,6 +250,11 @@ public class ImpGameDAO implements GameDAO {
         }
     }
 
+    /**
+     * Получения рандомной игры из базы данных с указанным жанром
+     * @param genre жанр игры {@link com.rgmb.generator.entity.GameGenre}
+     * @return игра или null в том случае, если игры с таким жанром нет
+     */
     @Override
     public Game getRandomGame(GameGenre genre) {
         String SQL = generalSql + "  WHERE  ggt.genres ILIKE '%" + genre.getName() + "%' ORDER BY RANDOM() LIMIT 1";
@@ -176,6 +265,12 @@ public class ImpGameDAO implements GameDAO {
         }
     }
 
+    /**
+     * Получения рандомной игры из базы данных с указанным годом выпуска
+     * @param firstYear левая граница отрезка
+     * @param secondYear правая граница отрезка
+     * @return игра или null в том случае, если игры с указанном годом выпуска нет
+     */
     @Override
     public Game getRandomGame(int firstYear, int secondYear) {
         String SQL = generalSql + "  WHERE (games.release_year BETWEEN ? AND ?) ORDER BY RANDOM() LIMIT 1";
@@ -186,6 +281,13 @@ public class ImpGameDAO implements GameDAO {
         }
     }
 
+    /**
+     * Получения рандомной игры из базы данных с указанным годом выпуска и жанром
+     * @param genre жанр игры {@link com.rgmb.generator.entity.GameGenre}
+     * @param firstYear левая граница отрезка
+     * @param secondYear правая граница отрезка
+     * @return игра или null в том случае, если игры с указанном годом выпуска и жанром нет
+     */
     @Override
     public Game getRandomGame(GameGenre genre, int firstYear, int secondYear) {
         String SQL = generalSql + "  WHERE (games.release_year BETWEEN ? AND ?) AND ggt.genres ILIKE '%" + genre.getName() + "%' LIMIT 1";
@@ -196,6 +298,11 @@ public class ImpGameDAO implements GameDAO {
         }
     }
 
+    /**
+     * Поиск игры по id
+     * @param id id игры
+     * @return игра или null в том случае, если игры с таким id нет в базе данных
+     */
     @Override
     public Game findById(int id) {
         String SQL = generalSql + " WHERE books.book_id = ?";
@@ -206,6 +313,10 @@ public class ImpGameDAO implements GameDAO {
         }
     }
 
+    /**
+     * Получение всех книг из базы данных
+     * @return массив игр {@link com.rgmb.generator.entity.GameGenre}
+     */
     @Override
     public List<Game> findAll() {
         String SQL = generalSql;
@@ -216,24 +327,43 @@ public class ImpGameDAO implements GameDAO {
         }
     }
 
+    /**
+     * Удаление игры по id
+     * @param id id игры
+     * @return количество удаленных записей
+     */
     @Override
     public int deleteById(int id) {
         String SQL = "DELETE FROM games WHERE game_id = ?";
         return template.update(SQL,id);
     }
 
+    /**
+     * Обновление url постера игры по id
+     * @param id id игры
+     * @param imageName url постера игры
+     * @return количество обновленных строк
+     */
     @Override
     public int updateImageNameById(int id, String imageName) {
         String SQL = "UPDATE games SET image = ? WHERE game_id = ?";
         return template.update(SQL,imageName,id);
     }
 
+    /**
+     * Получение минимального года выпуска игр из базы данных
+     * @return минимальный год выпуска игр
+     */
     @Override
     public int getMinYear() {
         String SQL = "SELECT MAX(release_year) AS max_year FROM games";
         return template.queryForObject(SQL, (ResultSet resultSet,int i) -> resultSet.getInt("max_year"));
     }
 
+    /**
+     * Получение максимального года выпуска игр из базы данных
+     * @return максимального год выпуска игр
+     */
     @Override
     public int getMaxYear() {
         String SQL = "SELECT MIN(release_year) AS min_year FROM games";

@@ -4,6 +4,10 @@ import com.rgmb.generator.entity.Country;
 
 import java.util.List;
 
+/**
+ * Интерфейс для сущности - страна
+ * См реализацию в классе {@link com.rgmb.generator.impdao.ImpCountryDAO}
+ */
 public interface CountryDAO {
     int findIdByCountryTitle(String title);
 
